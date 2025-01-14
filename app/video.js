@@ -3,12 +3,12 @@
 import { View, Text } from "react-native";
 import * as React from "react";
 
-const Home = () => {
+const Video = () => {
   return (
     <View>
-      <Text>Home</Text>
+      <Text>Hello World Video</Text>
     </View>
   );
 };
 
-export default Home;
+export default Video;
