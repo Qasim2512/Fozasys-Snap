@@ -1,12 +1,19 @@
 /** @format */
 
 import { View, Text } from "react-native";
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 
 const Home = () => {
+  const [message, setmMessage] = useState("");
+
+  useEffect(() => {
+    fetch("http://localhost:8000/message")
+      .then((res) => res.json())
+      .then((data) => setmMessage(data.message));
+  }, []);
   return (
     <View>
-      <Text>Home</Text>
+      <Text>{message}</Text>
     </View>
   );
 };
