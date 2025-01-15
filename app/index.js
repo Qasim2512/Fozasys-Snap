@@ -1,12 +1,25 @@
 /** @format */
 
+import React from "react";
 import { View, Text } from "react-native";
-import * as React from "react";
+import { Button } from "react-native-paper";
 
 const Home = () => {
+  const handleVideoCapture = () => {
+    console.log("Video capture initiated");
+    
+  };
+
   return (
-    <View>
-      <Text>Home</Text>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text style={{ marginBottom: 20, fontSize: 20 }}>Home</Text>
+      <Button 
+        icon="camera" 
+        mode="contained" 
+        onPress={handleVideoCapture}
+      >
+        Start Video Capture
+      </Button>
     </View>
   );
 };
