@@ -1,9 +1,16 @@
 /** @format */
 
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
+import React, { useState, useEffect } from "react";
 
 const Home = () => {
+  const [message, setmMessage] = useState("");
+
+  useEffect(() => {
+    fetch("http://localhost:8000/message")
+      .then((res) => res.json())
+      .then((data) => setmMessage(data.message));
+  }, []);
   const [isRecording, setIsRecording] = useState(false);
 
   const handleStartRecording = () => {
@@ -20,7 +27,7 @@ const Home = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
+      <Text style={styles.title}>{message}</Text>
       <View style={styles.recordButtonContainer}>
         <TouchableOpacity
           onPressIn={handleStartRecording}
