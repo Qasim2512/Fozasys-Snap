@@ -2,7 +2,7 @@
 
 import styles from "./RecordingButton.style.js";
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 
 const Button = () => {
   const [isRecording, setIsRecording] = useState(false);
