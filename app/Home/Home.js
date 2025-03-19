@@ -1,12 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Platform,
-} from "react-native";
+import { View, Text, TouchableOpacity, Image, ScrollView, Platform } from "react-native";
 import { Camera } from "expo-camera";
 import styles from "./Home.style";
 
@@ -14,10 +7,12 @@ const Home = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef(null);
   const videoRef = useRef(null);
-  const [latestImage, setLatestImage] = useState(null); // 🆕 Siste bilde tatt
-  const [savedImages, setSavedImages] = useState([]); // 🆕 Lagrede bilder
-  const [imageHistory, setImageHistory] = useState([]);
+  const [latestImage, setLatestImage] = useState(null);
+  const [savedMedia, setSavedMedia] = useState([]);
+  const [isRecording, setIsRecording] = useState(false);
   const [cameraStarted, setCameraStarted] = useState(false);
+  const mediaRecorderRef = useRef(null);
+  const recordedChunks = useRef([]);
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -32,9 +27,10 @@ const Home = () => {
 
   const startWebCamera = async () => {
     if (Platform.OS === "web") {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        videoRef.current.muted = true; // Forhindrer at lyden spilles av under opptak
       }
       setCameraStarted(true);
     }
@@ -52,60 +48,64 @@ const Home = () => {
       context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
 
       const imageData = canvas.toDataURL("image/png");
-      setLatestImage(imageData); // 🆕 Oppdater siste bilde
-      setImageHistory([...imageHistory, imageData]);
+      setLatestImage(imageData);
+      setSavedMedia([...savedMedia, { type: "image", uri: imageData }]);
     } else {
       if (cameraRef.current) {
         const photo = await cameraRef.current.takePictureAsync();
-        setLatestImage(photo.uri); // 🆕 Oppdater siste bilde
-        setImageHistory([...imageHistory, photo.uri]);
+        setLatestImage(photo.uri);
+        setSavedMedia([...savedMedia, { type: "image", uri: photo.uri }]);
       }
     }
   };
 
-  const saveImage = () => {
-    if (latestImage) {
-      setSavedImages([...savedImages, latestImage]); // 🆕 Lagre bildet
-      setLatestImage(null); // Tøm forhåndsvisningen
+  const startRecording = async () => {
+    if (Platform.OS === "web") {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      recordedChunks.current = [];
+
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunks.current.push(event.data);
+        }
+      };
+
+      mediaRecorderRef.current.onstop = () => {
+        const blob = new Blob(recordedChunks.current, { type: "video/webm" });
+        const videoURL = URL.createObjectURL(blob);
+        setSavedMedia([...savedMedia, { type: "video", uri: videoURL }]);
+      };
+
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+
+      setTimeout(() => {
+        stopRecording();
+      }, 120000); // Stopper opptaket automatisk etter 2 minutter
     }
   };
 
-  const deleteImage = (index) => {
-    const newImages = savedImages.filter((_, i) => i !== index);
-    setSavedImages(newImages);
+  const stopRecording = () => {
+    if (Platform.OS === "web" && mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
   };
 
-  const downloadImage = (uri) => {
-    const link = document.createElement("a");
-    link.href = uri;
-    link.download = "saved-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const deleteMedia = (index) => {
+    const newMedia = savedMedia.filter((_, i) => i !== index);
+    setSavedMedia(newMedia);
   };
-
-  if (hasPermission === null) {
-    return <View />;
-  }
-  if (hasPermission === false) {
-    return <Text>Ingen tilgang til kamera</Text>;
-  }
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.mainScroll}
-        contentContainerStyle={{ alignItems: "center" }}
-      >
-        {/* Kamera- eller videovindu */}
+      <ScrollView style={styles.mainScroll} contentContainerStyle={{ alignItems: "center" }}>
         {Platform.OS === "web" ? (
           <>
             <video ref={videoRef} autoPlay style={styles.camera} />
             {!cameraStarted && (
-              <TouchableOpacity
-                style={styles.captureButton}
-                onPress={startWebCamera}
-              >
+              <TouchableOpacity style={styles.captureButton} onPress={startWebCamera}>
                 <Text style={styles.buttonText}>Start kamera</Text>
               </TouchableOpacity>
             )}
@@ -114,44 +114,28 @@ const Home = () => {
           <Camera ref={cameraRef} style={styles.camera} />
         )}
 
-        {/* Ta bilde knapp */}
         <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
           <Text style={styles.buttonText}>Ta bilde</Text>
         </TouchableOpacity>
 
-        {/* Siste bilde tatt */}
-        {latestImage && (
-          <View style={styles.latestImageContainer}>
-            <Text style={styles.historyTitle}>Siste bilde:</Text>
-            <Image source={{ uri: latestImage }} style={styles.previewLarge} />
-            <TouchableOpacity style={styles.saveButton} onPress={saveImage}>
-              <Text style={styles.buttonText}>Lagre bilde</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        <TouchableOpacity style={styles.captureButton} onPress={isRecording ? stopRecording : startRecording}>
+          <Text style={styles.buttonText}>{isRecording ? "Stopp opptak" : "Ta video"}</Text>
+        </TouchableOpacity>
 
-        {/* Lagrede bilder seksjon */}
-        {savedImages.length > 0 && (
+        {savedMedia.length > 0 && (
           <View style={styles.imageContainer}>
-            <Text style={styles.historyTitle}>Lagrede bilder:</Text>
+            <Text style={styles.historyTitle}>Lagrede medier:</Text>
             <ScrollView horizontal style={styles.scrollView}>
-              {savedImages.map((uri, index) => (
+              {savedMedia.map((item, index) => (
                 <View key={index} style={styles.imageWrapper}>
-                  <Image source={{ uri }} style={styles.preview} />
-                  <TouchableOpacity
-                    style={styles.deleteButton}
-                    onPress={() => deleteImage(index)}
-                  >
+                  {item.type === "image" ? (
+                    <Image source={{ uri: item.uri }} style={styles.preview} />
+                  ) : (
+                    <video controls src={item.uri} style={styles.preview} />
+                  )}
+                  <TouchableOpacity style={styles.deleteButton} onPress={() => deleteMedia(index)}>
                     <Text style={styles.buttonText}>Slett</Text>
                   </TouchableOpacity>
-                  {Platform.OS === "web" && (
-                    <TouchableOpacity
-                      style={styles.downloadButton}
-                      onPress={() => downloadImage(uri)}
-                    >
-                      <Text style={styles.buttonText}>Last ned</Text>
-                    </TouchableOpacity>
-                  )}
                 </View>
               ))}
             </ScrollView>
