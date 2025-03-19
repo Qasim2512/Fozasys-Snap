@@ -1,163 +1,158 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
   View,
-  Text,
   TouchableOpacity,
   Image,
-  ScrollView,
   Platform,
+  Text,
+  Alert,
 } from "react-native";
 import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library"; // 🔹 For å lagre bilder
 import styles from "./Home.style";
 
 const Home = () => {
   const [hasPermission, setHasPermission] = useState(null);
+  const [mediaPermission, setMediaPermission] = useState(null);
+  const [cameraStarted, setCameraStarted] = useState(false); // 🔹 Kamera-status
   const cameraRef = useRef(null);
   const videoRef = useRef(null);
-  const [latestImage, setLatestImage] = useState(null); // 🆕 Siste bilde tatt
-  const [savedImages, setSavedImages] = useState([]); // 🆕 Lagrede bilder
-  const [imageHistory, setImageHistory] = useState([]);
-  const [cameraStarted, setCameraStarted] = useState(false);
+  const [photoUri, setPhotoUri] = useState(null);
 
   useEffect(() => {
-    if (Platform.OS === "web") {
-      setHasPermission(true);
-    } else {
-      (async () => {
+    (async () => {
+      if (Platform.OS === "web") {
+        setHasPermission(true);
+      } else {
         const { status } = await Camera.requestCameraPermissionsAsync();
+        const mediaStatus = await MediaLibrary.requestPermissionsAsync();
+
+        if (status !== "granted") {
+          Alert.alert(
+            "Tillatelse kreves",
+            "Gå til innstillinger for å aktivere kamera."
+          );
+        }
+
+        if (mediaStatus.status !== "granted") {
+          Alert.alert(
+            "Lagringstillatelse kreves",
+            "Gå til innstillinger for å tillate lagring av bilder."
+          );
+        }
+
         setHasPermission(status === "granted");
-      })();
-    }
+        setMediaPermission(mediaStatus.status === "granted");
+      }
+    })();
   }, []);
 
   const startWebCamera = async () => {
     if (Platform.OS === "web") {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+        setCameraStarted(true); // 🔹 Sett kamera til aktivt
+      } catch (error) {
+        console.error("Kameraet kunne ikke starte:", error);
+        alert(
+          "Kameraet kunne ikke starte. Sjekk nettlesertillatelser og at ingen andre apper bruker kameraet."
+        );
       }
-      setCameraStarted(true);
+    } else {
+      setCameraStarted(true); // 🔹 For mobil, vi antar at kameraet starter
     }
   };
 
   const takePicture = async () => {
     if (Platform.OS === "web") {
       if (!videoRef.current) return;
-
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
       canvas.width = videoRef.current.videoWidth;
       canvas.height = videoRef.current.videoHeight;
-
       context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-
-      const imageData = canvas.toDataURL("image/png");
-      setLatestImage(imageData); // 🆕 Oppdater siste bilde
-      setImageHistory([...imageHistory, imageData]);
+      setPhotoUri(canvas.toDataURL("image/png"));
     } else {
       if (cameraRef.current) {
         const photo = await cameraRef.current.takePictureAsync();
-        setLatestImage(photo.uri); // 🆕 Oppdater siste bilde
-        setImageHistory([...imageHistory, photo.uri]);
+        setPhotoUri(photo.uri);
       }
     }
   };
 
-  const saveImage = () => {
-    if (latestImage) {
-      setSavedImages([...savedImages, latestImage]); // 🆕 Lagre bildet
-      setLatestImage(null); // Tøm forhåndsvisningen
+  const savePicture = async () => {
+    if (Platform.OS === "web") {
+      const link = document.createElement("a");
+      link.href = photoUri;
+      link.download = "photo.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      alert("Bildet er lastet ned!");
+    } else {
+      if (mediaPermission) {
+        await MediaLibrary.saveToLibraryAsync(photoUri);
+        alert("Bildet er lagret i galleriet!");
+      } else {
+        alert("Du må gi tilgang til lagring for å lagre bilder.");
+      }
     }
   };
 
-  const deleteImage = (index) => {
-    const newImages = savedImages.filter((_, i) => i !== index);
-    setSavedImages(newImages);
+  const deletePicture = () => {
+    setPhotoUri(null);
   };
 
-  const downloadImage = (uri) => {
-    const link = document.createElement("a");
-    link.href = uri;
-    link.download = "saved-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  if (hasPermission === null) {
-    return <View />;
-  }
-  if (hasPermission === false) {
-    return <Text>Ingen tilgang til kamera</Text>;
-  }
+  if (hasPermission === null) return <View />;
+  if (hasPermission === false) return <Text>Ingen tilgang til kamera</Text>;
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.mainScroll}
-        contentContainerStyle={{ alignItems: "center" }}
-      >
-        {/* Kamera- eller videovindu */}
-        {Platform.OS === "web" ? (
-          <>
-            <video ref={videoRef} autoPlay style={styles.camera} />
-            {!cameraStarted && (
-              <TouchableOpacity
-                style={styles.captureButton}
-                onPress={startWebCamera}
-              >
-                <Text style={styles.buttonText}>Start kamera</Text>
-              </TouchableOpacity>
-            )}
-          </>
-        ) : (
-          <Camera ref={cameraRef} style={styles.camera} />
-        )}
+      {photoUri ? (
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: photoUri }} style={styles.preview} />
 
-        {/* Ta bilde knapp */}
-        <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
-          <Text style={styles.buttonText}>Ta bilde</Text>
-        </TouchableOpacity>
+          {/* X-knapp for å slette bildet */}
+          <TouchableOpacity style={styles.deleteButton} onPress={deletePicture}>
+            <Text style={styles.buttonText}>❌</Text>
+          </TouchableOpacity>
 
-        {/* Siste bilde tatt */}
-        {latestImage && (
-          <View style={styles.latestImageContainer}>
-            <Text style={styles.historyTitle}>Siste bilde:</Text>
-            <Image source={{ uri: latestImage }} style={styles.previewLarge} />
-            <TouchableOpacity style={styles.saveButton} onPress={saveImage}>
-              <Text style={styles.buttonText}>Lagre bilde</Text>
+          {/* Post-knapp for å laste ned bildet */}
+          <TouchableOpacity style={styles.postButton} onPress={savePicture}>
+            <Text style={styles.buttonText}>Last ned 📤</Text>
+          </TouchableOpacity>
+        </View>
+      ) : Platform.OS === "web" ? (
+        <View style={styles.cameraContainer}>
+          <video ref={videoRef} autoPlay style={styles.camera} />
+          {!cameraStarted && (
+            <TouchableOpacity
+              style={styles.startButton}
+              onPress={startWebCamera}
+            >
+              <Text style={styles.startButtonText}>📷 Start kamera</Text>
             </TouchableOpacity>
-          </View>
-        )}
+          )}
+        </View>
+      ) : (
+        <Camera ref={cameraRef} style={styles.camera} />
+      )}
 
-        {/* Lagrede bilder seksjon */}
-        {savedImages.length > 0 && (
-          <View style={styles.imageContainer}>
-            <Text style={styles.historyTitle}>Lagrede bilder:</Text>
-            <ScrollView horizontal style={styles.scrollView}>
-              {savedImages.map((uri, index) => (
-                <View key={index} style={styles.imageWrapper}>
-                  <Image source={{ uri }} style={styles.preview} />
-                  <TouchableOpacity
-                    style={styles.deleteButton}
-                    onPress={() => deleteImage(index)}
-                  >
-                    <Text style={styles.buttonText}>Slett</Text>
-                  </TouchableOpacity>
-                  {Platform.OS === "web" && (
-                    <TouchableOpacity
-                      style={styles.downloadButton}
-                      onPress={() => downloadImage(uri)}
-                    >
-                      <Text style={styles.buttonText}>Last ned</Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-              ))}
-            </ScrollView>
-          </View>
-        )}
-      </ScrollView>
+      {/* Ta bilde knapp (kun synlig når kameraet er startet) */}
+      {cameraStarted && !photoUri && (
+        <TouchableOpacity
+          style={styles.captureButton}
+          onPress={takePicture}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.buttonText}>📸 Ta bilde</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

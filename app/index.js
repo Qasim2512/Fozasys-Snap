@@ -1,9 +1,10 @@
 /** @format */
 
+import React from "react";
 import Home from "./Home/Home";
 
 const Index = () => {
-  return <Home></Home>;
+  return <Home />;
 };
 
 export default Index;
