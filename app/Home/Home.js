@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Text, TouchableOpacity, Image, ScrollView, Platform } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Platform,
+} from "react-native";
 import { Camera } from "expo-camera";
 import styles from "./Home.style";
 
@@ -10,7 +17,7 @@ const Home = () => {
   const [latestImage, setLatestImage] = useState(null);
   const [savedMedia, setSavedMedia] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
-  const [cameraStarted, setCameraStarted] = useState(false);
+  const [cameraStarted, setCameraStarted] = useState(false); // 🔹 Kamera må startes først
   const mediaRecorderRef = useRef(null);
   const recordedChunks = useRef([]);
 
@@ -27,16 +34,21 @@ const Home = () => {
 
   const startWebCamera = async () => {
     if (Platform.OS === "web") {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         videoRef.current.muted = true; // Forhindrer at lyden spilles av under opptak
       }
-      setCameraStarted(true);
+      setCameraStarted(true); // 🔹 Nå kan "Ta bilde"-knappen vises
     }
   };
 
   const takePicture = async () => {
+    if (!cameraStarted) return; // 🔹 Forhindrer at knappen brukes før kameraet er startet
+
     if (Platform.OS === "web") {
       if (!videoRef.current) return;
 
@@ -60,8 +72,13 @@ const Home = () => {
   };
 
   const startRecording = async () => {
+    if (!cameraStarted) return; // 🔹 Forhindrer opptak før kamera er startet
+
     if (Platform.OS === "web") {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
       mediaRecorderRef.current = new MediaRecorder(stream);
       recordedChunks.current = [];
 
@@ -100,12 +117,18 @@ const Home = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.mainScroll} contentContainerStyle={{ alignItems: "center" }}>
+      <ScrollView
+        style={styles.mainScroll}
+        contentContainerStyle={{ alignItems: "center" }}
+      >
         {Platform.OS === "web" ? (
           <>
             <video ref={videoRef} autoPlay style={styles.camera} />
             {!cameraStarted && (
-              <TouchableOpacity style={styles.captureButton} onPress={startWebCamera}>
+              <TouchableOpacity
+                style={styles.captureButton}
+                onPress={startWebCamera}
+              >
                 <Text style={styles.buttonText}>Start kamera</Text>
               </TouchableOpacity>
             )}
@@ -114,13 +137,24 @@ const Home = () => {
           <Camera ref={cameraRef} style={styles.camera} />
         )}
 
-        <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
-          <Text style={styles.buttonText}>Ta bilde</Text>
-        </TouchableOpacity>
+        {/* "Ta bilde"-knappen vises kun når kameraet er startet */}
+        {cameraStarted && (
+          <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
+            <Text style={styles.buttonText}>📸 Ta bilde</Text>
+          </TouchableOpacity>
+        )}
 
-        <TouchableOpacity style={styles.captureButton} onPress={isRecording ? stopRecording : startRecording}>
-          <Text style={styles.buttonText}>{isRecording ? "Stopp opptak" : "Ta video"}</Text>
-        </TouchableOpacity>
+        {/* "Ta video"-knappen vises kun når kameraet er startet */}
+        {cameraStarted && (
+          <TouchableOpacity
+            style={styles.captureButton}
+            onPress={isRecording ? stopRecording : startRecording}
+          >
+            <Text style={styles.buttonText}>
+              {isRecording ? "⏹ Stopp opptak" : "🎥 Ta video"}
+            </Text>
+          </TouchableOpacity>
+        )}
 
         {savedMedia.length > 0 && (
           <View style={styles.imageContainer}>
@@ -133,8 +167,11 @@ const Home = () => {
                   ) : (
                     <video controls src={item.uri} style={styles.preview} />
                   )}
-                  <TouchableOpacity style={styles.deleteButton} onPress={() => deleteMedia(index)}>
-                    <Text style={styles.buttonText}>Slett</Text>
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => deleteMedia(index)}
+                  >
+                    <Text style={styles.buttonText}>🗑 Slett</Text>
                   </TouchableOpacity>
                 </View>
               ))}
