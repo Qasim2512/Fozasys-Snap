@@ -8,18 +8,19 @@ import {
   Platform,
 } from "react-native";
 import { Camera } from "expo-camera";
+import { useRouter } from "expo-router";
 import styles from "./Home.style";
 
 const Home = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef(null);
   const videoRef = useRef(null);
-  const [latestImage, setLatestImage] = useState(null);
-  const [savedMedia, setSavedMedia] = useState([]);
+  const [latestMedia, setLatestMedia] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
-  const [cameraStarted, setCameraStarted] = useState(false); // 🔹 Kamera må startes først
+  const [cameraStarted, setCameraStarted] = useState(false);
   const mediaRecorderRef = useRef(null);
   const recordedChunks = useRef([]);
+  const router = useRouter();
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -40,14 +41,14 @@ const Home = () => {
       });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.muted = true; // Forhindrer at lyden spilles av under opptak
+        videoRef.current.muted = true;
       }
-      setCameraStarted(true); // 🔹 Nå kan "Ta bilde"-knappen vises
+      setCameraStarted(true);
     }
   };
 
   const takePicture = async () => {
-    if (!cameraStarted) return; // 🔹 Forhindrer at knappen brukes før kameraet er startet
+    if (!cameraStarted) return;
 
     if (Platform.OS === "web") {
       if (!videoRef.current) return;
@@ -60,19 +61,17 @@ const Home = () => {
       context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
 
       const imageData = canvas.toDataURL("image/png");
-      setLatestImage(imageData);
-      setSavedMedia([...savedMedia, { type: "image", uri: imageData }]);
+      setLatestMedia({ type: "image", uri: imageData });
     } else {
       if (cameraRef.current) {
         const photo = await cameraRef.current.takePictureAsync();
-        setLatestImage(photo.uri);
-        setSavedMedia([...savedMedia, { type: "image", uri: photo.uri }]);
+        setLatestMedia({ type: "image", uri: photo.uri });
       }
     }
   };
 
   const startRecording = async () => {
-    if (!cameraStarted) return; // 🔹 Forhindrer opptak før kamera er startet
+    if (!cameraStarted) return;
 
     if (Platform.OS === "web") {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -91,7 +90,7 @@ const Home = () => {
       mediaRecorderRef.current.onstop = () => {
         const blob = new Blob(recordedChunks.current, { type: "video/webm" });
         const videoURL = URL.createObjectURL(blob);
-        setSavedMedia([...savedMedia, { type: "video", uri: videoURL }]);
+        setLatestMedia({ type: "video", uri: videoURL });
       };
 
       mediaRecorderRef.current.start();
@@ -99,7 +98,7 @@ const Home = () => {
 
       setTimeout(() => {
         stopRecording();
-      }, 120000); // Stopper opptaket automatisk etter 2 minutter
+      }, 120000);
     }
   };
 
@@ -110,10 +109,8 @@ const Home = () => {
     }
   };
 
-  const deleteMedia = (index) => {
-    const newMedia = savedMedia.filter((_, i) => i !== index);
-    setSavedMedia(newMedia);
-  };
+  if (hasPermission === null) return <View />;
+  if (hasPermission === false) return <Text>Ingen tilgang til kamera</Text>;
 
   return (
     <View style={styles.container}>
@@ -137,45 +134,52 @@ const Home = () => {
           <Camera ref={cameraRef} style={styles.camera} />
         )}
 
-        {/* "Ta bilde"-knappen vises kun når kameraet er startet */}
-        {cameraStarted && (
-          <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
-            <Text style={styles.buttonText}>📸 Ta bilde</Text>
-          </TouchableOpacity>
+        {cameraStarted && !latestMedia && (
+          <>
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={takePicture}
+            >
+              <Text style={styles.buttonText}>📸 Ta bilde</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={isRecording ? stopRecording : startRecording}
+            >
+              <Text style={styles.buttonText}>
+                {isRecording ? "⏹ Stopp opptak" : "🎥 Ta video"}
+              </Text>
+            </TouchableOpacity>
+          </>
         )}
 
-        {/* "Ta video"-knappen vises kun når kameraet er startet */}
-        {cameraStarted && (
-          <TouchableOpacity
-            style={styles.captureButton}
-            onPress={isRecording ? stopRecording : startRecording}
-          >
-            <Text style={styles.buttonText}>
-              {isRecording ? "⏹ Stopp opptak" : "🎥 Ta video"}
-            </Text>
-          </TouchableOpacity>
-        )}
-
-        {savedMedia.length > 0 && (
+        {latestMedia && (
           <View style={styles.imageContainer}>
-            <Text style={styles.historyTitle}>Lagrede medier:</Text>
-            <ScrollView horizontal style={styles.scrollView}>
-              {savedMedia.map((item, index) => (
-                <View key={index} style={styles.imageWrapper}>
-                  {item.type === "image" ? (
-                    <Image source={{ uri: item.uri }} style={styles.preview} />
-                  ) : (
-                    <video controls src={item.uri} style={styles.preview} />
-                  )}
-                  <TouchableOpacity
-                    style={styles.deleteButton}
-                    onPress={() => deleteMedia(index)}
-                  >
-                    <Text style={styles.buttonText}>🗑 Slett</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
-            </ScrollView>
+            {latestMedia.type === "image" ? (
+              <Image source={{ uri: latestMedia.uri }} style={styles.preview} />
+            ) : (
+              <video controls src={latestMedia.uri} style={styles.preview} />
+            )}
+
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => setLatestMedia(null)}
+            >
+              <Text style={styles.buttonText}>❌ Slett</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.postButton}
+              onPress={() =>
+                router.push({
+                  pathname: "/Posts",
+                  params: { uri: latestMedia.uri, type: latestMedia.type },
+                })
+              }
+            >
+              <Text style={styles.buttonText}>📤 Post</Text>
+            </TouchableOpacity>
           </View>
         )}
       </ScrollView>
