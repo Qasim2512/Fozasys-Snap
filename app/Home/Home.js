@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useState, useRef, useEffect } from "react";
 import {
   View,
@@ -10,6 +12,7 @@ import {
 import { Camera } from "expo-camera";
 import { useRouter } from "expo-router";
 import styles from "./Home.style";
+import axios from "axios";
 
 const Home = () => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -112,6 +115,41 @@ const Home = () => {
   if (hasPermission === null) return <View />;
   if (hasPermission === false) return <Text>Ingen tilgang til kamera</Text>;
 
+  const Post = () => {
+    console.log(latestMedia);
+    const formData = new FormData();
+    formData.append("file", latestMedia.uri);
+    formData.append("name", "qasim");
+
+    if (latestMedia.type === "image") {
+      axios
+        .post("http://localhost:3000/photo", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      axios
+        .post("http://localhost:3000/video", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -171,12 +209,7 @@ const Home = () => {
 
             <TouchableOpacity
               style={styles.postButton}
-              onPress={() =>
-                router.push({
-                  pathname: "/Posts",
-                  params: { uri: latestMedia.uri, type: latestMedia.type },
-                })
-              }
+              onPress={() => Post({})}
             >
               <Text style={styles.buttonText}>📤 Post</Text>
             </TouchableOpacity>

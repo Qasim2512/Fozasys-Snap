@@ -8,6 +8,15 @@ import SearchBar from "../../Components/Searchbar/Searchbar";
 const Posts = () => {
   const [video, setVideo] = useState([]);
 
+  /*
+  const videoURl =
+    "https://res.cloudinary.com/dand5cke0/video/upload/v1743966441/fqnigrt5zh29tovjtsae.mkv";
+
+     <video width="600" controls autoPlay>
+        <source src={videoURl} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    */
   useEffect(() => {
     fetchData();
   }, []);
@@ -28,7 +37,7 @@ const Posts = () => {
         <Text>Navn: {video[0].video}</Text>
       ) : (
         <Text>Loading...</Text>
-      )}
+      )}{" "}
     </View>
   );
 };

@@ -23,7 +23,7 @@ const Navbar = () => {
         <Text>📸 Photos</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("Video")}>
-        <Text>📸 Videos</Text>
+        <Text>🎥 Videos</Text>
       </TouchableOpacity>
     </View>
   );
