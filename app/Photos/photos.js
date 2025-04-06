@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import styles from "./Posts.style";
+import styles from "./Photos.style";
 import SearchBar from "../../Components/Searchbar/Searchbar";
 
 const Posts = () => {

@@ -1,7 +1,10 @@
+/** @format */
+
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import Home from "./Home/Home";
-import Post from "./Posts/posts";
+import Photos from "./Photos/photos";
+import Video from "./Video/video";
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState("Home");
@@ -20,16 +23,24 @@ const Index = () => {
         <TouchableOpacity onPress={() => setCurrentPage("Home")}>
           <Text style={{ color: "white", fontSize: 18 }}>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setCurrentPage("Post")}>
-          <Text style={{ color: "white", fontSize: 18 }}>Posts</Text>
+        <TouchableOpacity onPress={() => setCurrentPage("Photos")}>
+          <Text style={{ color: "white", fontSize: 18 }}>Photos</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setCurrentPage("Video")}>
+          <Text style={{ color: "white", fontSize: 18 }}>Videos</Text>
         </TouchableOpacity>
       </View>
 
       {/* Viser riktig side basert på currentPage */}
-      {currentPage === "Home" ? <Home /> : <Post />}
+      {currentPage === "Home" ? (
+        <Home />
+      ) : currentPage === "Photos" ? (
+        <Photos />
+      ) : (
+        <Video />
+      )}
     </View>
   );
 };
 
 export default Index;
-
