@@ -121,33 +121,21 @@ const Home = () => {
     formData.append("file", latestMedia.uri);
     formData.append("name", "qasim");
 
-    if (latestMedia.type === "image") {
-      axios
-        .post("http://localhost:3000/photo", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      axios
-        .post("http://localhost:3000/video", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+    const endpoint = latestMedia.type === "image" ? "photo" : "video";
+
+    axios
+      .post(`http://localhost:3000/${endpoint}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        setLatestMedia(null); // <--- Allow taking another photo after post
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
