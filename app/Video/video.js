@@ -5,7 +5,7 @@ import { Text, View } from "react-native";
 import styles from "./Video.style";
 import SearchBar from "../../Components/Searchbar/Searchbar";
 
-const Posts = () => {
+const Video = () => {
   const [video, setVideo] = useState([]);
 
   /*
@@ -42,4 +42,4 @@ const Posts = () => {
   );
 };
 
-export default Posts;
+export default Video;

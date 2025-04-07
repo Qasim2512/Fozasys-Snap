@@ -1,11 +1,11 @@
 /** @format */
 
 import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { Text, View, Image, ScrollView } from "react-native";
 import styles from "./Photos.style";
 import SearchBar from "../../Components/Searchbar/Searchbar";
 
-const Posts = () => {
+const Photo = () => {
   const [photos, setPhotos] = useState([]);
 
   useEffect(() => {
@@ -18,14 +18,23 @@ const Posts = () => {
     setPhotos(data);
   };
 
-  console.log(photos);
-
   return (
     <View style={styles.container}>
       <SearchBar style={styles.searchbar} />
       <Text>Her skal alle postene ligge</Text>
       {photos.length > 0 ? (
-        <Text>Navn: {photos[0].photo}</Text>
+        <ScrollView>
+          {photos.map((photos, index) => (
+            <View key={index} style={{ marginBottom: 20 }}>
+              <Text>Navn: {photos.photo}</Text>
+              <Image
+                style={{ width: 500, height: 500 }}
+                source={{ uri: photos.photo }}
+                onError={(error) => console.log("Error loading image:", error)} // Logge feil fører til at bilde ikke lastes
+              />
+            </View>
+          ))}
+        </ScrollView>
       ) : (
         <Text>Loading...</Text>
       )}
@@ -33,4 +42,4 @@ const Posts = () => {
   );
 };
 
-export default Posts;
+export default Photo;
