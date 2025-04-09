@@ -1,82 +1,89 @@
+/** @format */
+
+// Home.style.js
 import { StyleSheet } from "react-native";
 
-export default StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#ecf0f1", // Lys bakgrunnsfarge
+    padding: 15,
     alignItems: "center",
-    backgroundColor: "#000",
-    paddingTop: 20,
-    paddingBottom: 20,
   },
   mainScroll: {
-    width: "100%",
     flexGrow: 1,
+    width: "100%",
   },
   camera: {
-    width: "80%",
-    height: 400,
-    borderRadius: 10,
-    marginBottom: 10,
+    width: "100%",
+    height: 300,
+    borderRadius: 15,
+    overflow: "hidden",
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: "#3498db",
   },
   captureButton: {
-    backgroundColor: "#007AFF",
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 10,
+    backgroundColor: "#3498db",
+    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    margin: 10,
+    elevation: 5,
   },
   buttonText: {
-    color: "white",
+    color: "#ffffff",
+    fontWeight: "bold",
     fontSize: 16,
     textAlign: "center",
   },
-  latestImageContainer: {
-    marginTop: 20,
-    alignItems: "center",
-  },
-  previewLarge: {
-    width: 250,
-    height: 250,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  saveButton: {
-    backgroundColor: "#FFCC00",
-    padding: 10,
-    borderRadius: 5,
-  },
   imageContainer: {
-    marginTop: 20,
-    width: "100%",
     alignItems: "center",
-  },
-  historyTitle: {
-    color: "white",
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  scrollView: {
-    width: "100%",
-    maxHeight: 200,
-  },
-  imageWrapper: {
-    marginRight: 10,
-    alignItems: "center",
+    marginVertical: 20,
+    backgroundColor: "#ffffff",
+    borderRadius: 15,
+    padding: 20,
+    width: "50%", // Gjør containeren så bred som mulig
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
   preview: {
-    width: 120,
-    height: 120,
+    width: "100%", // Sett bredden til å være 100%
+    height: 300, // Sett til en maksimal høyde der hele bildet kan vises
     borderRadius: 10,
+    resizeMode: "contain", // Sørg for at hele bildet vises uten kutting
+    marginBottom: 10,
   },
   deleteButton: {
-    backgroundColor: "red",
-    padding: 5,
-    borderRadius: 5,
-    marginTop: 5,
+    backgroundColor: "#e74c3c", // Rød farge for slett-knappen
+    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    marginVertical: 10,
+    elevation: 5,
   },
-  downloadButton: {
-    backgroundColor: "#28A745",
-    padding: 5,
+  postButton: {
+    backgroundColor: "#2ecc71", // Grønn farge for post-knappen
+    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    marginVertical: 10,
+    elevation: 5,
+  },
+  input: {
+    height: 50,
+    borderColor: "#3498db",
+    borderWidth: 2,
     borderRadius: 5,
-    marginTop: 5,
+    marginVertical: 10,
+    paddingHorizontal: 10,
+    width: "100%", // Setter til full bredde
+    backgroundColor: "#f9f9f9",
+    fontSize: 16,
   },
 });
+
+export default styles;

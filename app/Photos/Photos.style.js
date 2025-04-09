@@ -1,86 +1,86 @@
 /** @format */
 
-// Photos.style.js
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f4f8",
-    padding: 10,
-    alignItems: "center",
+    backgroundColor: "#ecf0f1", // Lys bakgrunnsfarge
+    padding: 15,
+    alignItems: "center", // Sentrer innholdet
   },
   searchbar: {
-    marginBottom: 10,
-    borderRadius: 20,
+    marginVertical: 15,
+    borderRadius: 30,
     backgroundColor: "#ffffff",
     elevation: 3,
-    padding: 6,
-    fontSize: 14,
-    borderColor: "#007aff",
-    borderWidth: 1,
-    color: "#007aff",
+    padding: 10,
+    width: "100%", // Full bredde til søkefeltet
   },
   headingText: {
-    fontSize: 20,
+    fontSize: 24, // Større fontstørrelse for overskrift
     fontWeight: "bold",
     color: "#2c3e50",
-    marginBottom: 8,
+    marginBottom: 20,
     textAlign: "center",
-    textShadowColor: "#dcdcdc",
-    textShadowOffset: { width: 0.5, height: 0.5 },
-    textShadowRadius: 2,
+  },
+  mainScroll: {
+    flexGrow: 1,
+    width: "100%",
   },
   photoCard: {
+    width: 500, // Full bredde for kortet
+    height: 400, // Høyden på kortene
+    marginBottom: 20, // Økt margin for å gi bedre mellomrom
     backgroundColor: "#ffffff",
-    borderRadius: 6,
-    overflow: "hidden",
+    borderRadius: 10,
+    padding: 10,
     elevation: 3,
-    marginBottom: 15,
-    width: 450,
-    height: 450,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 25,
-  },
-  imageWrapper: {
-    borderWidth: 5, 
-    borderColor: "#3498db", 
-    borderRadius: 6,
-    width: "100%", 
-    height: "70%", 
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  photoImage: {
-    width: "100%", 
-    height: "100%", 
-    borderRadius: 6,
-    resizeMode: "cover",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
   },
   photoText: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#34495e",
-    fontWeight: "500",
-    marginBottom: 3,
-    textAlign: "center",
+    marginBottom: 5,
+  },
+  imageWrapper: {
+    borderWidth: 5,
+    borderColor: "#3498db", // Farge på kanten til bildewrapper
+    borderRadius: 10,
+    overflow: "hidden",
+    width: "100%", // Ta opp hele bredden av kortet
+    height: "70%", // Ta opp mesteparten av kortets høyde
+  },
+  photoImage: {
+    width: "100%",
+    height: "100%", // Fyller hele bildet i wrapperen
+    resizeMode: "cover", // Sørg for at hele bildet vises uten kutting
+  },
+  photoDescription: {
+    fontSize: 14, // Størrelse for beskrivelse
+    color: "#7f8c8d",
+    textAlign: "center", // Sentrerer teksten
   },
   deleteButton: {
-    backgroundColor: "#ff4757",
-    borderRadius: 15,
-    padding: 6,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 6,
-    elevation: 2,
+    backgroundColor: "#e74c3c", // Rød farge for slett-knappen
+    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    marginTop: 25,
+    elevation: 5,
+    alignSelf: "center", // Sentrere slett-knappen
   },
   buttonText: {
     color: "#ffffff",
     fontWeight: "bold",
-    fontSize: 12,
+    fontSize: 16,
+    textAlign: "center",
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#7f8c8d",
     textAlign: "center",
   },

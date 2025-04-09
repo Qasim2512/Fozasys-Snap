@@ -21,17 +21,17 @@ const Photo = () => {
   const deletePhoto = async (_id) => {
     try {
       const response = await fetch(`http://localhost:3000/photo/${_id}`, {
-        method: "DELETE", 
+        method: "DELETE",
       });
 
-      console.log("Response:", response); 
+      console.log("Response:", response);
       if (response.ok) {
-        console.log("Photo deleted successfully."); 
+        console.log("Photo deleted successfully.");
         setPhotos((prevPhotos) =>
           prevPhotos.filter((photo) => photo._id !== _id)
         );
       } else {
-        console.error("Failed to delete the photo.", await response.text()); 
+        console.error("Failed to delete the photo.", await response.text());
       }
     } catch (error) {
       console.error("Error deleting the photo:", error);
@@ -43,24 +43,25 @@ const Photo = () => {
       <SearchBar style={styles.searchbar} />
       <Text style={styles.headingText}>Her skal alle postene ligge</Text>
       <ScrollView
-        contentContainerStyle={{ alignItems: "center" }} 
-        showsVerticalScrollIndicator={false} 
+        contentContainerStyle={{ alignItems: "center" }}
+        showsVerticalScrollIndicator={false}
       >
         {photos.length > 0 ? (
           photos.map((photo, index) => (
             <View key={index} style={styles.photoCard}>
-              <Text style={styles.photoText}>
-                Navn: {photo.name}, ID: {photo._id}
-              </Text>
+              <Text style={styles.photoText}>Navn: {photo.name}</Text>
               <View style={styles.imageWrapper}>
                 <Image
                   style={styles.photoImage}
                   source={{ uri: photo.photo }}
                 />
+                <Text style={styles.photoDescription}>
+                  description: {photo.description}
+                </Text>
               </View>
               <TouchableOpacity
                 style={styles.deleteButton}
-                onPress={() => deletePhoto(photo._id)} 
+                onPress={() => deletePhoto(photo._id)}
               >
                 <Text style={styles.buttonText}>❌ Slett</Text>
               </TouchableOpacity>

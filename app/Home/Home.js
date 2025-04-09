@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   Platform,
+  TextInput,
 } from "react-native";
 import { Camera } from "expo-camera";
 import { useRouter } from "expo-router";
@@ -120,6 +121,7 @@ const Home = () => {
     const formData = new FormData();
     formData.append("file", latestMedia.uri);
     formData.append("name", "qasim");
+    formData.append("description", "very nice");
 
     const endpoint = latestMedia.type === "image" ? "photo" : "video";
 
@@ -182,11 +184,14 @@ const Home = () => {
 
         {latestMedia && (
           <View style={styles.imageContainer}>
+            <TextInput style={styles.input} placeholder="name" />
             {latestMedia.type === "image" ? (
               <Image source={{ uri: latestMedia.uri }} style={styles.preview} />
             ) : (
               <video controls src={latestMedia.uri} style={styles.preview} />
             )}
+
+            <TextInput style={styles.input} placeholder="description" />
 
             <TouchableOpacity
               style={styles.deleteButton}
@@ -195,10 +200,7 @@ const Home = () => {
               <Text style={styles.buttonText}>❌ Slett</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.postButton}
-              onPress={() => Post({})}
-            >
+            <TouchableOpacity style={styles.postButton} onPress={() => Post()}>
               <Text style={styles.buttonText}>📤 Post</Text>
             </TouchableOpacity>
           </View>

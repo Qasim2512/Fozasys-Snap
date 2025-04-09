@@ -1,22 +1,13 @@
 /** @format */
 
 import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import styles from "./Video.style";
 import SearchBar from "../../Components/Searchbar/Searchbar";
 
 const Video = () => {
   const [video, setVideo] = useState([]);
 
-  /*
-  const videoURl =
-    "https://res.cloudinary.com/dand5cke0/video/upload/v1743966441/fqnigrt5zh29tovjtsae.mkv";
-
-     <video width="600" controls autoPlay>
-        <source src={videoURl} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-    */
   useEffect(() => {
     fetchData();
   }, []);
@@ -27,17 +18,58 @@ const Video = () => {
     setVideo(data);
   };
 
-  console.log(video);
+  const deleteVideo = async (_id) => {
+    try {
+      const response = await fetch(`http://localhost:3000/video/${_id}`, {
+        method: "DELETE",
+      });
+
+      console.log("Response:", response);
+      if (response.ok) {
+        console.log("video deleted successfully.");
+        setVideo((prevVideo) =>
+          prevVideo.filter((video) => video._id !== _id)
+        );
+      } else {
+        console.error("Failed to delete the video.", await response.text());
+      }
+    } catch (error) {
+      console.error("Error deleting the video:", error);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <SearchBar style={styles.searchbar} />
-      <Text>Her skal alle postene ligge</Text>
-      {video.length > 0 ? (
-        <Text>Navn: {video[0].video}</Text>
-      ) : (
-        <Text>Loading...</Text>
-      )}{" "}
+      <Text style={styles.headingText}>Her skal alle postene ligge</Text>
+      <ScrollView
+        contentContainerStyle={{ alignItems: "center" }}
+        showsVerticalScrollIndicator={false}
+      >
+        {video.length > 0 ? (
+          video.map((video, index) => (
+            <View key={index} style={styles.videoCard}>
+              <Text style={styles.videoText}>
+                Navn: {video.name}, ID: {video._id}
+              </Text>
+              <View style={styles.imageWrapper}>
+                <Image
+                  style={styles.videoImage}
+                  source={{ uri: video.video }}
+                />
+              </View>
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => deleteVideo(video._id)}
+              >
+                <Text style={styles.buttonText}>❌ Slett</Text>
+              </TouchableOpacity>
+            </View>
+          ))
+        ) : (
+          <Text style={styles.loadingText}>Loading...</Text>
+        )}
+      </ScrollView>
     </View>
   );
 };
