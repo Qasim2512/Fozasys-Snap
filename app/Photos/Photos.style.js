@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#34495e",
     marginBottom: 5,
+    textAlign: "center",
   },
   imageWrapper: {
     borderWidth: 5,

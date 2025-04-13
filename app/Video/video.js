@@ -27,9 +27,7 @@ const Video = () => {
       console.log("Response:", response);
       if (response.ok) {
         console.log("video deleted successfully.");
-        setVideo((prevVideo) =>
-          prevVideo.filter((video) => video._id !== _id)
-        );
+        setVideo((prevVideo) => prevVideo.filter((video) => video._id !== _id));
       } else {
         console.error("Failed to delete the video.", await response.text());
       }
@@ -49,15 +47,16 @@ const Video = () => {
         {video.length > 0 ? (
           video.map((video, index) => (
             <View key={index} style={styles.videoCard}>
-              <Text style={styles.videoText}>
-                Navn: {video.name}, ID: {video._id}
-              </Text>
+              <Text style={styles.videoText}>Navn: {video.name}</Text>
               <View style={styles.imageWrapper}>
                 <Image
                   style={styles.videoImage}
                   source={{ uri: video.video }}
                 />
               </View>
+              <Text style={styles.videoDescription}>
+                description: {video.description}
+              </Text>
               <TouchableOpacity
                 style={styles.deleteButton}
                 onPress={() => deleteVideo(video._id)}

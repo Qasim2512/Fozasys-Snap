@@ -55,10 +55,10 @@ const Photo = () => {
                   style={styles.photoImage}
                   source={{ uri: photo.photo }}
                 />
-                <Text style={styles.photoDescription}>
-                  description: {photo.description}
-                </Text>
               </View>
+              <Text style={styles.photoDescription}>
+                description: {photo.description}
+              </Text>
               <TouchableOpacity
                 style={styles.deleteButton}
                 onPress={() => deletePhoto(photo._id)}

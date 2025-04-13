@@ -1,6 +1,5 @@
 /** @format */
 
-
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
@@ -63,6 +62,11 @@ const styles = StyleSheet.create({
     color: "#34495e",
     fontWeight: "500",
     marginBottom: 3,
+    textAlign: "center",
+  },
+  photoDescription: {
+    fontSize: 14,
+    color: "#7f8c8d",
     textAlign: "center",
   },
   deleteButton: {

@@ -25,6 +25,8 @@ const Home = () => {
   const mediaRecorderRef = useRef(null);
   const recordedChunks = useRef([]);
   const router = useRouter();
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -120,8 +122,8 @@ const Home = () => {
     console.log(latestMedia);
     const formData = new FormData();
     formData.append("file", latestMedia.uri);
-    formData.append("name", "qasim");
-    formData.append("description", "very nice");
+    formData.append("name", name);
+    formData.append("description", description);
 
     const endpoint = latestMedia.type === "image" ? "photo" : "video";
 
@@ -184,14 +186,24 @@ const Home = () => {
 
         {latestMedia && (
           <View style={styles.imageContainer}>
-            <TextInput style={styles.input} placeholder="name" />
+            <TextInput
+              style={styles.input}
+              placeholder="name"
+              value={name}
+              onChangeText={(text) => setName(text)}
+            />
             {latestMedia.type === "image" ? (
               <Image source={{ uri: latestMedia.uri }} style={styles.preview} />
             ) : (
               <video controls src={latestMedia.uri} style={styles.preview} />
             )}
 
-            <TextInput style={styles.input} placeholder="description" />
+            <TextInput
+              style={styles.input}
+              placeholder="description"
+              value={description}
+              onChangeText={(text) => setDescription(text)}
+            />
 
             <TouchableOpacity
               style={styles.deleteButton}
