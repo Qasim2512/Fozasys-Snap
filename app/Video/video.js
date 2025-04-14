@@ -3,10 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import styles from "./Video.style";
-import SearchBar from "../../Components/Searchbar/Searchbar";
+import { Searchbar } from "react-native-paper";
+import filter from "lodash.filter";
 
 const Video = () => {
-  const [video, setVideo] = useState([]);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [data, setData] = useState([]);
+  const [fullData, setFullData] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -14,8 +17,23 @@ const Video = () => {
 
   const fetchData = async () => {
     let response = await fetch("http://localhost:3000/video");
-    let data = await response.json();
-    setVideo(data);
+    let dataInfo = await response.json();
+    setData(dataInfo);
+    setFullData(dataInfo); 
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    const formattedQuery = query.toLowerCase();
+    const filteredData = filter(fullData, (user) => {
+      return contains(user, formattedQuery);
+    });
+    console.log(filteredData);
+    setData(filteredData);
+  };
+
+  const contains = ({ name }, query) => {
+    return name.toLowerCase().includes(query); 
   };
 
   const deleteVideo = async (_id) => {
@@ -27,7 +45,10 @@ const Video = () => {
       console.log("Response:", response);
       if (response.ok) {
         console.log("video deleted successfully.");
-        setVideo((prevVideo) => prevVideo.filter((video) => video._id !== _id));
+        setData((prevVideo) => prevVideo.filter((video) => video._id !== _id));
+        setFullData((prevData) =>
+          prevData.filter((photo) => photo._id !== _id)
+        );
       } else {
         console.error("Failed to delete the video.", await response.text());
       }
@@ -38,14 +59,20 @@ const Video = () => {
 
   return (
     <View style={styles.container}>
-      <SearchBar style={styles.searchbar} />
+      <Searchbar
+        placeholder="Search by name"
+        onChangeText={handleSearch} 
+        value={searchQuery}
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
       <Text style={styles.headingText}>Her skal alle postene ligge</Text>
       <ScrollView
         contentContainerStyle={{ alignItems: "center" }}
         showsVerticalScrollIndicator={false}
       >
-        {video.length > 0 ? (
-          video.map((video, index) => (
+        {data.length > 0 ? (
+          data.map((video, index) => (
             <View key={index} style={styles.videoCard}>
               <Text style={styles.videoText}>Navn: {video.name}</Text>
               <View style={styles.imageWrapper}>
@@ -65,8 +92,10 @@ const Video = () => {
               </TouchableOpacity>
             </View>
           ))
+        ) : searchQuery ? (
+          <Text>No results found for "{searchQuery}".</Text> 
         ) : (
-          <Text style={styles.loadingText}>Loading...</Text>
+          <Text>Loading...</Text> 
         )}
       </ScrollView>
     </View>
