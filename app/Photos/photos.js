@@ -19,6 +19,7 @@ const Photo = () => {
   const fetchData = async () => {
     let response = await fetch("http://localhost:3000/photo");
     let dataInfo = await response.json();
+
     setData(dataInfo);
     setFullData(dataInfo);
   };

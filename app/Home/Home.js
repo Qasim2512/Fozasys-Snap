@@ -27,6 +27,8 @@ const Home = () => {
   const router = useRouter();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [video, setVideo] = useState(null);
+  const { videoForCloud, setVideoForCloud } = useState(null);
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -95,6 +97,7 @@ const Home = () => {
 
       mediaRecorderRef.current.onstop = () => {
         const blob = new Blob(recordedChunks.current, { type: "video/webm" });
+
         const videoURL = URL.createObjectURL(blob);
         setLatestMedia({ type: "video", uri: videoURL });
       };
@@ -118,13 +121,38 @@ const Home = () => {
   if (hasPermission === null) return <View />;
   if (hasPermission === false) return <Text>Ingen tilgang til kamera</Text>;
 
+  const uploadFile = async () => {
+    const data = new FormData();
+    data.append("file", video);
+    data.append("upload_preset", "video_preset");
+
+    try {
+      let cloudName = "dand5cke0";
+      let resourceType = "video";
+      let api = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
+
+      const res = await axios.post(api, data);
+      const { secure_url } = res.data;
+      console.log(secure_url);
+      return secure_url;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const Post = () => {
     const formData = new FormData();
     formData.append("file", latestMedia.uri);
     formData.append("name", name);
     formData.append("description", description);
 
-    console.log(latestMedia.uri);
+    console.log("latesMedia");
+    console.log(latestMedia);
+
+    const mama = uploadFile();
+
+    console.log("fra cloud video");
+    console.log(mama);
 
     const endpoint = latestMedia.type === "image" ? "photo" : "video";
 
@@ -217,6 +245,12 @@ const Home = () => {
             </TouchableOpacity>
           </View>
         )}
+        <input
+          type="file"
+          accept="video/*"
+          id="video"
+          onChange={(e) => setVideo((prev) => e.target.files[0])}
+        />
       </ScrollView>
     </View>
   );
