@@ -7,7 +7,7 @@ import { Searchbar } from "react-native-paper";
 import filter from "lodash.filter";
 import { X } from "lucide-react-native";
 
-const Video = () => {
+const VideoList = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [data, setData] = useState([]);
   const [fullData, setFullData] = useState([]);
@@ -76,7 +76,7 @@ const Video = () => {
                 <Image
                   style={styles.videoImage}
                   source={{ uri: video.video }}
-                />
+                /> {/*husk å bytte denne til video og ikke image VELDIG VIKTIG HUSKEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
               </View>
               <Text style={styles.videoDescription}>
                 description: {video.description}
@@ -101,4 +101,4 @@ const Video = () => {
   );
 };
 
-export default Video;
+export default VideoList;

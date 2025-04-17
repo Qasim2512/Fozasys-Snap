@@ -11,24 +11,23 @@ import {
   TextInput,
 } from "react-native";
 import { Camera } from "expo-camera";
-import { useRouter } from "expo-router";
 import styles from "./Home.style";
 import axios from "axios";
 
 const Home = () => {
-  const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef(null);
   const videoRef = useRef(null);
-  const [latestMedia, setLatestMedia] = useState(null);
-  const [isRecording, setIsRecording] = useState(false);
-  const [cameraStarted, setCameraStarted] = useState(false);
   const mediaRecorderRef = useRef(null);
   const recordedChunks = useRef([]);
-  const router = useRouter();
+
+  const [hasPermission, setHasPermission] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [cameraStarted, setCameraStarted] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [video, setVideo] = useState(null);
-  const [videoForCloud, setVideoForCloud] = useState(null);
+
+  const [latestMedia, setLatestMedia] = useState(null); //Image: Show and send to backend. Video: Only show, videoForCloud sent to Cloud and then backend
+  const [videoForCloud, setVideoForCloud] = useState(null); //For sending video taken to cloud and get secure_url
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -98,22 +97,19 @@ const Home = () => {
       mediaRecorderRef.current.onstop = () => {
         const blob = new Blob(recordedChunks.current, { type: "video/webm" });
 
-        // This is used for playback or other uses
         const videoURL = URL.createObjectURL(blob);
         setLatestMedia({ type: "video", uri: videoURL });
 
-        // Convert the Blob to Base64 for cloud upload or storage
         const reader = new FileReader();
         reader.onloadend = function () {
-          const base64String = reader.result; // This includes the data URL prefix
-          const base64Video = base64String.split(",")[1]; // Extract the Base64 data only
+          const base64String = reader.result;
+          const base64Video = base64String.split(",")[1];
 
-          // Ensure the prefix is added if sending to Cloudinary is needed
           const cloudinaryDataUrl = `data:video/webm;base64,${base64Video}`;
-          setVideoForCloud(cloudinaryDataUrl); // Store Base64 string with prefix
+          setVideoForCloud(cloudinaryDataUrl);
         };
 
-        reader.readAsDataURL(blob); // Convert the blob to base64
+        reader.readAsDataURL(blob);
       };
 
       mediaRecorderRef.current.start();
@@ -263,12 +259,6 @@ const Home = () => {
             </TouchableOpacity>
           </View>
         )}
-        <input
-          type="file"
-          accept="video/*"
-          id="video"
-          onChange={(e) => setVideo((prev) => e.target.files[0])}
-        />
       </ScrollView>
     </View>
   );

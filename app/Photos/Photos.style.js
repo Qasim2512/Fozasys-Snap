@@ -74,6 +74,10 @@ const styles = StyleSheet.create({
     marginTop: 25,
     elevation: 5,
     alignSelf: "center", // Sentrere slett-knappen
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
   },
   buttonText: {
     color: "#ffffff",

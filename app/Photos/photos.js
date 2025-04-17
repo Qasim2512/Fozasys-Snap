@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import { Searchbar } from "react-native-paper";
 import filter from "lodash.filter";
+import { X } from "lucide-react-native";
 
 import styles from "./Photos.style";
 
@@ -86,7 +87,9 @@ const Photo = () => {
                 style={styles.deleteButton}
                 onPress={() => deletePhoto(photo._id)}
               >
-                <Text style={styles.buttonText}>❌ Slett</Text>
+                <X style={styles.buttonLogo} />
+
+                <Text style={styles.buttonText}>Slett</Text>
               </TouchableOpacity>
             </View>
           ))
