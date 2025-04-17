@@ -28,7 +28,7 @@ const Home = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [video, setVideo] = useState(null);
-  const { videoForCloud, setVideoForCloud } = useState(null);
+  const [videoForCloud, setVideoForCloud] = useState(null);
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -98,8 +98,22 @@ const Home = () => {
       mediaRecorderRef.current.onstop = () => {
         const blob = new Blob(recordedChunks.current, { type: "video/webm" });
 
+        // This is used for playback or other uses
         const videoURL = URL.createObjectURL(blob);
         setLatestMedia({ type: "video", uri: videoURL });
+
+        // Convert the Blob to Base64 for cloud upload or storage
+        const reader = new FileReader();
+        reader.onloadend = function () {
+          const base64String = reader.result; // This includes the data URL prefix
+          const base64Video = base64String.split(",")[1]; // Extract the Base64 data only
+
+          // Ensure the prefix is added if sending to Cloudinary is needed
+          const cloudinaryDataUrl = `data:video/webm;base64,${base64Video}`;
+          setVideoForCloud(cloudinaryDataUrl); // Store Base64 string with prefix
+        };
+
+        reader.readAsDataURL(blob); // Convert the blob to base64
       };
 
       mediaRecorderRef.current.start();
@@ -123,7 +137,11 @@ const Home = () => {
 
   const uploadFile = async () => {
     const data = new FormData();
-    data.append("file", video);
+
+    console.log("videoforcloud");
+    console.log(videoForCloud);
+
+    data.append("file", videoForCloud);
     data.append("upload_preset", "video_preset");
 
     try {
