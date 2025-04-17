@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     width: 500, // Full bredde for kortet
     height: 400, // Høyden på kortene
     marginBottom: 20, // Økt margin for å gi bedre mellomrom
+    marginTop: 20,
     backgroundColor: "#ffffff",
     borderRadius: 10,
     padding: 10,

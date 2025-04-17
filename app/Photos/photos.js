@@ -29,7 +29,6 @@ const Photo = () => {
     const filteredData = filter(fullData, (user) => {
       return contains(user, formattedQuery);
     });
-    console.log(filteredData);
     setData(filteredData);
   };
 
@@ -43,9 +42,7 @@ const Photo = () => {
         method: "DELETE",
       });
 
-      console.log("Response:", response);
       if (response.ok) {
-        console.log("Photo deleted successfully.");
         setData((prevdata) => prevdata.filter((photo) => photo._id !== _id));
         setFullData((prevData) =>
           prevData.filter((photo) => photo._id !== _id)

@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
     width: "100%", // Setter til full bredde
     backgroundColor: "#f9f9f9",
     fontSize: 16,
+    textAlign:"center"
   },
 });
 

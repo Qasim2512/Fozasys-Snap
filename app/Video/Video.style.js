@@ -35,7 +35,8 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     overflow: "hidden",
     elevation: 3,
-    marginBottom: 15,
+    marginBottom: 20,
+    marginTop: 20,
     width: 450,
     height: 450,
     alignItems: "center",
@@ -73,15 +74,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#ff4757",
     borderRadius: 15,
     padding: 6,
-    alignItems: "center",
-    justifyContent: "center",
     marginTop: 6,
     elevation: 2,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection:"row"
   },
   buttonText: {
     color: "#ffffff",
     fontWeight: "bold",
     fontSize: 12,
+  },
+  buttonLogo:{
+color: "black",
+
   },
   loadingText: {
     fontSize: 14,

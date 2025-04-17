@@ -119,11 +119,12 @@ const Home = () => {
   if (hasPermission === false) return <Text>Ingen tilgang til kamera</Text>;
 
   const Post = () => {
-    console.log(latestMedia);
     const formData = new FormData();
     formData.append("file", latestMedia.uri);
     formData.append("name", name);
     formData.append("description", description);
+
+    console.log(latestMedia.uri);
 
     const endpoint = latestMedia.type === "image" ? "photo" : "video";
 
@@ -134,8 +135,7 @@ const Home = () => {
         },
       })
       .then((response) => {
-        console.log(response);
-        setLatestMedia(null); // <--- Allow taking another photo after post
+        setLatestMedia(null);
       })
       .catch((error) => {
         console.log(error);

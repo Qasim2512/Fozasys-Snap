@@ -5,6 +5,7 @@ import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import styles from "./Video.style";
 import { Searchbar } from "react-native-paper";
 import filter from "lodash.filter";
+import { X } from "lucide-react-native";
 
 const Video = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -16,10 +17,10 @@ const Video = () => {
   }, []);
 
   const fetchData = async () => {
-    let response = await fetch("http://localhost:3000/video");
-    let dataInfo = await response.json();
+    const response = await fetch("http://localhost:3000/video");
+    const dataInfo = await response.json();
     setData(dataInfo);
-    setFullData(dataInfo); 
+    setFullData(dataInfo);
   };
 
   const handleSearch = (query) => {
@@ -28,12 +29,11 @@ const Video = () => {
     const filteredData = filter(fullData, (user) => {
       return contains(user, formattedQuery);
     });
-    console.log(filteredData);
     setData(filteredData);
   };
 
   const contains = ({ name }, query) => {
-    return name.toLowerCase().includes(query); 
+    return name.toLowerCase().includes(query);
   };
 
   const deleteVideo = async (_id) => {
@@ -42,9 +42,7 @@ const Video = () => {
         method: "DELETE",
       });
 
-      console.log("Response:", response);
       if (response.ok) {
-        console.log("video deleted successfully.");
         setData((prevVideo) => prevVideo.filter((video) => video._id !== _id));
         setFullData((prevData) =>
           prevData.filter((photo) => photo._id !== _id)
@@ -61,12 +59,11 @@ const Video = () => {
     <View style={styles.container}>
       <Searchbar
         placeholder="Search by name"
-        onChangeText={handleSearch} 
+        onChangeText={handleSearch}
         value={searchQuery}
         autoCapitalize="none"
         autoCorrect={false}
       />
-      <Text style={styles.headingText}>Her skal alle postene ligge</Text>
       <ScrollView
         contentContainerStyle={{ alignItems: "center" }}
         showsVerticalScrollIndicator={false}
@@ -88,14 +85,16 @@ const Video = () => {
                 style={styles.deleteButton}
                 onPress={() => deleteVideo(video._id)}
               >
-                <Text style={styles.buttonText}>❌ Slett</Text>
+                <X style={styles.buttonLogo} />
+
+                <Text style={styles.buttonText}>Slett</Text>
               </TouchableOpacity>
             </View>
           ))
         ) : searchQuery ? (
-          <Text>No results found for "{searchQuery}".</Text> 
+          <Text>No results found for "{searchQuery}".</Text>
         ) : (
-          <Text>Loading...</Text> 
+          <Text>Loading...</Text>
         )}
       </ScrollView>
     </View>
