@@ -131,12 +131,8 @@ const Home = () => {
   if (hasPermission === null) return <View />;
   if (hasPermission === false) return <Text>Ingen tilgang til kamera</Text>;
 
-  const uploadFile = async () => {
+  const uploadVideoToCloudinary = async () => {
     const data = new FormData();
-
-    console.log("videoforcloud");
-    console.log(videoForCloud);
-
     data.append("file", videoForCloud);
     data.append("upload_preset", "video_preset");
 
@@ -146,29 +142,24 @@ const Home = () => {
       let api = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
 
       const res = await axios.post(api, data);
-      const { secure_url } = res.data;
-      console.log(secure_url);
-      return secure_url;
+      const url = res.data.secure_url;
+      return url;
     } catch (error) {
       console.error(error);
     }
   };
 
-  const Post = () => {
+  const Post = async () => {
+    const cloudSecureUrl = await uploadVideoToCloudinary();
+    const endpoint = latestMedia.type === "image" ? "photo" : "video";
+
     const formData = new FormData();
-    formData.append("file", latestMedia.uri);
+    formData.append(
+      "file",
+      endpoint === "photo" ? latestMedia.uri : cloudSecureUrl
+    );
     formData.append("name", name);
     formData.append("description", description);
-
-    console.log("latesMedia");
-    console.log(latestMedia);
-
-    const mama = uploadFile();
-
-    console.log("fra cloud video");
-    console.log(mama);
-
-    const endpoint = latestMedia.type === "image" ? "photo" : "video";
 
     axios
       .post(`http://localhost:3000/${endpoint}`, formData, {

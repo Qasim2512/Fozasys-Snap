@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import Home from "./Home/Home";
 import Photos from "./Photos/photos";
-import Video from "./Video/video";
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState("Home");
@@ -37,7 +36,7 @@ const Index = () => {
       ) : currentPage === "Photos" ? (
         <Photos />
       ) : (
-        <Video />
+        <VideoList />
       )}
     </View>
   );
