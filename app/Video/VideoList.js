@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import styles from "./Video.style";
 import { Searchbar } from "react-native-paper";
 import filter from "lodash.filter";
@@ -73,10 +73,11 @@ const VideoList = () => {
             <View key={index} style={styles.videoCard}>
               <Text style={styles.videoText}>Navn: {video.name}</Text>
               <View style={styles.imageWrapper}>
-                <Image
+                <video
                   style={styles.videoImage}
                   source={{ uri: video.video }}
-                /> {/*husk å bytte denne til video og ikke image VELDIG VIKTIG HUSKEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
+                />{" "}
+                {/*husk å bytte denne til video og ikke image VELDIG VIKTIG HUSKEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
               </View>
               <Text style={styles.videoDescription}>
                 description: {video.description}

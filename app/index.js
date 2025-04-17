@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import Home from "./Home/Home";
 import Photos from "./Photos/photos";
+import VideoList from "./Video/VideoList";
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState("Home");

@@ -126,10 +126,10 @@ const Home = () => {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
     }
-  };
 
-  if (hasPermission === null) return <View />;
-  if (hasPermission === false) return <Text>Ingen tilgang til kamera</Text>;
+    if (hasPermission === null) return <View />;
+    if (hasPermission === false) return <Text>Ingen tilgang til kamera</Text>;
+  };
 
   const uploadVideoToCloudinary = async () => {
     const data = new FormData();
@@ -151,6 +151,7 @@ const Home = () => {
 
   const Post = async () => {
     const cloudSecureUrl = await uploadVideoToCloudinary();
+    console.log(cloudSecureUrl)
     const endpoint = latestMedia.type === "image" ? "photo" : "video";
 
     const formData = new FormData();
