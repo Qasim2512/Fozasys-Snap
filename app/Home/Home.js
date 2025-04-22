@@ -10,7 +10,7 @@ import {
   Platform,
   TextInput,
 } from "react-native";
-import { Camera } from "expo-camera";
+import { CameraView } from "expo-camera";
 import styles from "./Home.style";
 import axios from "axios";
 
@@ -151,7 +151,7 @@ const Home = () => {
 
   const Post = async () => {
     const cloudSecureUrl = await uploadVideoToCloudinary();
-    console.log(cloudSecureUrl)
+    console.log(cloudSecureUrl);
     const endpoint = latestMedia.type === "image" ? "photo" : "video";
 
     const formData = new FormData();
@@ -195,7 +195,11 @@ const Home = () => {
             )}
           </>
         ) : (
-          <Camera ref={cameraRef} style={styles.camera} />
+          <>
+            <CameraView ref={cameraRef} style={styles.camera} />
+            <Text style={styles.buttonText}>Start kamera</Text>
+          </>
+          //  For å få den fiksa på appen må man skrive kode her inne bare å jobbe med det :)
         )}
 
         {cameraStarted && !latestMedia && (
