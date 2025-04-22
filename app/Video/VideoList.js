@@ -1,16 +1,18 @@
 /** @format */
 
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
 import styles from "./Video.style";
 import { Searchbar } from "react-native-paper";
 import filter from "lodash.filter";
 import { X } from "lucide-react-native";
+import Video from "react-native-video";
 
 const VideoList = () => {
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
   const [fullData, setFullData] = useState([]);
+  const [activeVideoId, setActiveVideoId] = useState(null); // Tilstand for aktiv video
 
   useEffect(() => {
     fetchData();
@@ -26,9 +28,9 @@ const VideoList = () => {
   const handleSearch = (query) => {
     setSearchQuery(query);
     const formattedQuery = query.toLowerCase();
-    const filteredData = filter(fullData, (user) => {
-      return contains(user, formattedQuery);
-    });
+    const filteredData = filter(fullData, (user) =>
+      contains(user, formattedQuery)
+    );
     setData(filteredData);
   };
 
@@ -47,6 +49,11 @@ const VideoList = () => {
         setFullData((prevData) =>
           prevData.filter((photo) => photo._id !== _id)
         );
+
+        // Demp lokal valgt video hvis slettet
+        if (activeVideoId === _id) {
+          setActiveVideoId(null);
+        }
       } else {
         console.error("Failed to delete the video.", await response.text());
       }
@@ -72,22 +79,32 @@ const VideoList = () => {
           data.map((video, index) => (
             <View key={index} style={styles.videoCard}>
               <Text style={styles.videoText}>Navn: {video.name}</Text>
-              <View style={styles.imageWrapper}>
-                <video
-                  style={styles.videoImage}
-                  source={{ uri: video.video }}
-                />{" "}
-                {/*husk å bytte denne til video og ikke image VELDIG VIKTIG HUSKEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
+              <View style={styles.videoWrapper}>
+                {activeVideoId === video._id ? (
+                  <Video
+                    source={{ uri: video.video }} // Bruk video URL
+                    style={styles.videoImage}
+                    controls={true} // Legg til kontroller
+                    resizeMode="contain" // Justering
+                    onEnd={() => setActiveVideoId(null)} // Sett aktiv video tilbake til null når videoen ender
+                  />
+                ) : (
+                  <TouchableOpacity
+                    onPress={() => setActiveVideoId(video._id)}
+                    style={styles.playButton}
+                  >
+                    <Text style={styles.playButtonText}>Play</Text>
+                  </TouchableOpacity>
+                )}
               </View>
               <Text style={styles.videoDescription}>
-                description: {video.description}
+                Description: {video.description}
               </Text>
               <TouchableOpacity
                 style={styles.deleteButton}
                 onPress={() => deleteVideo(video._id)}
               >
                 <X style={styles.buttonLogo} />
-
                 <Text style={styles.buttonText}>Slett</Text>
               </TouchableOpacity>
             </View>

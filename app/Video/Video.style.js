@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 25,
   },
-  imageWrapper: {
+  videoWrapper: {
     borderWidth: 5,
     borderColor: "#3498db",
     borderRadius: 6,
@@ -79,16 +79,28 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    flexDirection:"row"
+    flexDirection: "row",
   },
   buttonText: {
     color: "#ffffff",
     fontWeight: "bold",
     fontSize: 12,
   },
-  buttonLogo:{
-color: "black",
-
+  buttonLogo: {
+    color: "black",
+  },
+  playButton: {
+    backgroundColor: "#007BFF", // Endre bakgrunnsfarge
+    padding: 10, // Legg til padding
+    borderRadius: 5, // Rundede hjørner
+    alignItems: "center", // Sentrer innholdet
+    justifyContent: "center", // Sentrer innholdet vertikalt
+    marginTop: 10, // Margin over knappen
+  },
+  playButtonText: {
+    color: "#FFFFFF", // Tekstfarge (hvit)
+    fontSize: 16, // Tekststørrelse
+    fontWeight: "bold", // Fet skrift
   },
   loadingText: {
     fontSize: 14,
