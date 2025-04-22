@@ -12,7 +12,7 @@ const VideoList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
   const [fullData, setFullData] = useState([]);
-  const [activeVideoId, setActiveVideoId] = useState(null); // Tilstand for aktiv video
+  const [activeVideoId, setActiveVideoId] = useState(null); 
 
   useEffect(() => {
     fetchData();
@@ -50,7 +50,6 @@ const VideoList = () => {
           prevData.filter((photo) => photo._id !== _id)
         );
 
-        // Demp lokal valgt video hvis slettet
         if (activeVideoId === _id) {
           setActiveVideoId(null);
         }
@@ -82,11 +81,11 @@ const VideoList = () => {
               <View style={styles.videoWrapper}>
                 {activeVideoId === video._id ? (
                   <Video
-                    source={{ uri: video.video }} // Bruk video URL
+                    source={{ uri: video.video }} 
                     style={styles.videoImage}
-                    controls={true} // Legg til kontroller
-                    resizeMode="contain" // Justering
-                    onEnd={() => setActiveVideoId(null)} // Sett aktiv video tilbake til null når videoen ender
+                    controls={true} 
+                    resizeMode="contain"
+                    onEnd={() => setActiveVideoId(null)} 
                   />
                 ) : (
                   <TouchableOpacity

@@ -1,9 +1,8 @@
 {
   "expo": {
     "scheme": "acme",
-    "plugins": [
-      "expo-router"
-    ],
+    "newArchEnabled": true,
+    "plugins": ["expo-router"],
     "name": "Fozasys-Snap",
     "slug": "Fozasys-Snap"
   }
