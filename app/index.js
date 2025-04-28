@@ -14,9 +14,11 @@ const Index = () => {
       {/* Navbar uten imports */}
       <View
         style={{
+          display: "flex",
           flexDirection: "row",
           justifyContent: "space-around",
-          padding: 10,
+          marginTop: 0.5,
+          padding: 50,
           backgroundColor: "#333",
         }}
       >

@@ -1,7 +1,13 @@
 /** @format */
 
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+} from "react-native";
 import styles from "./Video.style";
 import { Searchbar } from "react-native-paper";
 import filter from "lodash.filter";
@@ -19,7 +25,11 @@ const VideoList = () => {
   }, []);
 
   const fetchData = async () => {
-    const response = await fetch("http://localhost:3000/video");
+    const baseUrl =
+      Platform.OS === "web"
+        ? `http://localhost:3000/video`
+        : `http://10."0.0.13:3000/video`;
+    let response = await fetch(baseUrl); //APP
     const dataInfo = await response.json();
     setData(dataInfo);
     setFullData(dataInfo);
@@ -39,8 +49,12 @@ const VideoList = () => {
   };
 
   const deleteVideo = async (_id) => {
+    const baseUrl =
+      Platform.OS === "web"
+        ? `http://localhost:3000/video/${_id}`
+        : `http://10.0.13:3000/video/${_id}`;
     try {
-      const response = await fetch(`http://localhost:3000/video/${_id}`, {
+      const response = await fetch(baseUrl, {
         method: "DELETE",
       });
 

@@ -40,6 +40,7 @@ const Home = () => {
     }
   }, []);
 
+  //KUN for web, for å starte kameraet
   const startWebCamera = async () => {
     if (Platform.OS === "web") {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -54,11 +55,11 @@ const Home = () => {
     }
   };
 
+  //Tar bilde og setter latestMedia til bilde både for web og app
   const takePicture = async () => {
-    if (!cameraStarted) return;
-
     if (Platform.OS === "web") {
       if (!videoRef.current) return;
+      if (!cameraStarted) return;
 
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
@@ -77,10 +78,11 @@ const Home = () => {
     }
   };
 
+  //Kun for web, fungerer ikke i appen
   const startRecording = async () => {
-    if (!cameraStarted) return;
-
     if (Platform.OS === "web") {
+      if (!cameraStarted) return;
+
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
@@ -121,6 +123,7 @@ const Home = () => {
     }
   };
 
+  //Fungerer i web, vet ikke om det fungerer i appen
   const stopRecording = () => {
     if (Platform.OS === "web" && mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
@@ -131,6 +134,7 @@ const Home = () => {
     if (hasPermission === false) return <Text>Ingen tilgang til kamera</Text>;
   };
 
+  //Fungerer i web, vet ikke om det fungerer i appen
   const uploadVideoToCloudinary = async () => {
     const data = new FormData();
     data.append("file", videoForCloud);
@@ -149,10 +153,18 @@ const Home = () => {
     }
   };
 
+  //Oppdater url slik at den funker i appen
+  //   http://192.168.0.14:3000 //APP
+
   const Post = async () => {
     const cloudSecureUrl = await uploadVideoToCloudinary();
     console.log(cloudSecureUrl);
     const endpoint = latestMedia.type === "image" ? "photo" : "video";
+
+    const baseUrl =
+      Platform.OS === "web"
+        ? `http://localhost:3000/${endpoint}`
+        : `http://10.0.0.13:3000/${endpoint}`;
 
     const formData = new FormData();
     formData.append(
@@ -163,7 +175,7 @@ const Home = () => {
     formData.append("description", description);
 
     axios
-      .post(`http://localhost:3000/${endpoint}`, formData, {
+      .post(baseUrl, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -197,7 +209,21 @@ const Home = () => {
         ) : (
           <>
             <CameraView ref={cameraRef} style={styles.camera} />
-            <Text style={styles.buttonText}>Start kamera</Text>
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={takePicture}
+            >
+              <Text style={styles.buttonText}>📸 Ta bilde</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={isRecording ? stopRecording : startRecording}
+            >
+              <Text style={styles.buttonText}>
+                {isRecording ? "⏹ Stopp opptak" : "🎥 Ta video"}
+              </Text>
+            </TouchableOpacity>
           </>
           //  For å få den fiksa på appen må man skrive kode her inne bare å jobbe med det :)
         )}

@@ -1,7 +1,14 @@
 /** @format */
 
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Platform
+} from "react-native";
 import { Searchbar } from "react-native-paper";
 import filter from "lodash.filter";
 import { X } from "lucide-react-native";
@@ -18,7 +25,14 @@ const Photo = () => {
   }, []);
 
   const fetchData = async () => {
-    let response = await fetch("http://localhost:3000/photo");
+    //  let response = await fetch("http://localhost:3000/photo"); WEB
+
+    const baseUrl =
+      Platform.OS === "web"
+        ? `http://localhost:3000/photo`
+        : `http://10.0.0.13:3000/photo`;
+
+    let response = await fetch(baseUrl); //APP
     let dataInfo = await response.json();
 
     setData(dataInfo);
@@ -39,8 +53,12 @@ const Photo = () => {
   };
 
   const deletePhoto = async (_id) => {
+    const baseUrl =
+          Platform.OS === "web"
+            ? `http://localhost:3000/photo/${_id}`
+            : `http://10.0.0.13:3000/photo/${_id}`;
     try {
-      const response = await fetch(`http://localhost:3000/photo/${_id}`, {
+      const response = await fetch(baseUrl, {
         method: "DELETE",
       });
 

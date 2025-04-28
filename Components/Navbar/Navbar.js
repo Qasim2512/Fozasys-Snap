@@ -8,14 +8,7 @@ const Navbar = () => {
   const navigation = useNavigation();
 
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-around",
-        padding: 10,
-        backgroundColor: "#ccc",
-      }}
-    >
+    <View>
       <TouchableOpacity onPress={() => navigation.navigate("Home")}>
         <Text>🏠 Home</Text>
       </TouchableOpacity>
