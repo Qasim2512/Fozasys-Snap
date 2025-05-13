@@ -28,7 +28,7 @@ const VideoList = () => {
     const baseUrl =
       Platform.OS === "web"
         ? `http://localhost:3000/video`
-        : `http://10."0.0.13:3000/video`;
+        : `http://172.20.10.3:3000/video`;
     let response = await fetch(baseUrl); //APP
     const dataInfo = await response.json();
     setData(dataInfo);
@@ -52,7 +52,7 @@ const VideoList = () => {
     const baseUrl =
       Platform.OS === "web"
         ? `http://localhost:3000/video/${_id}`
-        : `http://10.0.13:3000/video/${_id}`;
+        : `http://172.20.10.3:3000/video/${_id}`;
     try {
       const response = await fetch(baseUrl, {
         method: "DELETE",

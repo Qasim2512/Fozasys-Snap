@@ -30,7 +30,7 @@ const Photo = () => {
     const baseUrl =
       Platform.OS === "web"
         ? `http://localhost:3000/photo`
-        : `http://10.0.0.13:3000/photo`;
+        : `http://172.20.10.3:3000/photo`;
 
     let response = await fetch(baseUrl); //APP
     let dataInfo = await response.json();
@@ -54,9 +54,9 @@ const Photo = () => {
 
   const deletePhoto = async (_id) => {
     const baseUrl =
-          Platform.OS === "web"
-            ? `http://localhost:3000/photo/${_id}`
-            : `http://10.0.0.13:3000/photo/${_id}`;
+      Platform.OS === "web"
+        ? `http://localhost:3000/photo/${_id}`
+        : `http://172.20.10.3:3000/photo/${_id}`;
     try {
       const response = await fetch(baseUrl, {
         method: "DELETE",

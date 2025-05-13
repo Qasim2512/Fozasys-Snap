@@ -164,7 +164,7 @@ const Home = () => {
     const baseUrl =
       Platform.OS === "web"
         ? `http://localhost:3000/${endpoint}`
-        : `http://10.0.0.13:3000/${endpoint}`;
+        : `http://172.20.10.3:3000/${endpoint}`;
 
     const formData = new FormData();
     formData.append(

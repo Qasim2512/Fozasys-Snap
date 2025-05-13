@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     marginBottom: 20,
     marginTop: 20,
-    width: 450,
+    width: 350,
     height: 450,
     alignItems: "center",
     justifyContent: "center",
@@ -90,17 +90,17 @@ const styles = StyleSheet.create({
     color: "black",
   },
   playButton: {
-    backgroundColor: "#007BFF", // Endre bakgrunnsfarge
-    padding: 10, // Legg til padding
-    borderRadius: 5, // Rundede hjørner
-    alignItems: "center", // Sentrer innholdet
-    justifyContent: "center", // Sentrer innholdet vertikalt
-    marginTop: 10, // Margin over knappen
+    backgroundColor: "#007BFF", 
+    padding: 10, 
+    borderRadius: 5, 
+    alignItems: "center", 
+    justifyContent: "center", 
+    marginTop: 10, 
   },
   playButtonText: {
-    color: "#FFFFFF", // Tekstfarge (hvit)
-    fontSize: 16, // Tekststørrelse
-    fontWeight: "bold", // Fet skrift
+    color: "#FFFFFF", 
+    fontSize: 16,
+    fontWeight: "bold", 
   },
   loadingText: {
     fontSize: 14,
