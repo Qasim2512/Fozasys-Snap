@@ -1,13 +1,14 @@
 /** @format */
 
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated, Image } from "react-native";
 
-const Register = () => {
+const Register = ({ onRegisterSuccess, onGoToLogin }) => {  // Added onGoToLogin prop
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const [fadeAnim] = useState(new Animated.Value(0)); // For fade-in effect
 
   const handleRegister = async () => {
     const userData = {
@@ -16,20 +17,18 @@ const Register = () => {
       email,
     };
 
-    // Basic email validation
     if (!email.includes("@")) {
       setError("Please enter a valid email.");
       return;
     }
 
-    // Basic password validation
     if (password.length < 6) {
       setError("Password must be at least 6 characters.");
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:3000/auth/register", {  // Update the URL
+      const response = await fetch("http://localhost:3000/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,7 +38,7 @@ const Register = () => {
 
       if (response.ok) {
         console.log("User registered successfully.");
-        // You can redirect to another screen or show a success message here
+        onRegisterSuccess(); // ⬅ Redirect to login
       } else {
         const errorText = await response.text();
         setError(`Failed to register user: ${errorText}`);
@@ -50,23 +49,39 @@ const Register = () => {
     }
   };
 
+  // Fade-in animation on component mount
+  React.useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1500,
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim]);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.headingText}>Register</Text>
-      
+    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+      <Image
+        style={styles.logo}
+        source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/7/7f/Icon-Soccer.svg" }} // Relevant football emoji as a logo
+      />
+      <Text style={styles.headingText}>Register for ForzaSport</Text>
+      <Text style={styles.subheadingText}>Join the community of champions ⚽💪</Text>
+
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      
+
       <TextInput
         style={styles.input}
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
+        placeholderTextColor="#aaa"
       />
       <TextInput
         style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
+        placeholderTextColor="#aaa"
       />
       <TextInput
         style={styles.input}
@@ -74,12 +89,21 @@ const Register = () => {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+        placeholderTextColor="#aaa"
       />
-      
+
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
-    </View>
+
+      {/* Already have an account? Login here */}
+      <View style={styles.loginLinkContainer}>
+        <Text style={styles.loginText}>Already have an account? </Text>
+        <TouchableOpacity onPress={onGoToLogin}>
+          <Text style={styles.loginLink}>Login here</Text>
+        </TouchableOpacity>
+      </View>
+    </Animated.View>
   );
 };
 
@@ -89,33 +113,74 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor: "#fff", // White background for contrast
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    marginBottom: 30,
   },
   headingText: {
-    fontSize: 24,
+    fontSize: 32,
+    fontWeight: "700",
+    color: "#000", // Black text
     marginBottom: 20,
+    textAlign: "center",
+  },
+  subheadingText: {
+    fontSize: 16,
+    color: "#333", // Dark gray for the subheading
+    marginBottom: 30,
+    textAlign: "center",
+    fontStyle: "italic",
   },
   input: {
     width: "100%",
-    padding: 10,
-    marginBottom: 15,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
+    padding: 12,
+    marginBottom: 20,
+    borderColor: "#000", // Black border
+    borderWidth: 2,
+    borderRadius: 8,
+    backgroundColor: "#fff", // White background for inputs
+    fontSize: 16,
+    color: "#000", // Black text in inputs
   },
   button: {
-    backgroundColor: "#4CAF50",
-    padding: 10,
+    backgroundColor: "#000", // Black button
+    padding: 14,
     width: "100%",
     alignItems: "center",
-    borderRadius: 5,
+    borderRadius: 8,
+    marginVertical: 15,
+    shadowColor: "#000", // Shadow for the button
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
   },
   buttonText: {
-    color: "white",
-    fontSize: 16,
+    color: "#fff", // White text on black button
+    fontSize: 18,
+    fontWeight: "600",
   },
   errorText: {
     color: "red",
-    marginBottom: 10,
+    marginBottom: 20,
+    fontSize: 16,
+    textAlign: "center",
+  },
+  loginLinkContainer: {
+    marginTop: 20,
+    alignItems: "center",
+  },
+  loginText: {
+    fontSize: 16,
+    color: "#000", // Black text for "Already have an account?"
+  },
+  loginLink: {
+    fontSize: 16,
+    color: "#000", // Black color for the login link
+    textDecorationLine: "underline",
   },
 });
 

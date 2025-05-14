@@ -1,11 +1,9 @@
-/** @format */
-
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import styles from "./Photos.style";
 import SearchBar from "../../Components/Searchbar/Searchbar";
 
-const Photo = () => {
+const Photos = () => {
   const [photos, setPhotos] = useState([]);
 
   useEffect(() => {
@@ -24,14 +22,13 @@ const Photo = () => {
         method: "DELETE",
       });
 
-      console.log("Response:", response);
       if (response.ok) {
         console.log("Photo deleted successfully.");
         setPhotos((prevPhotos) =>
           prevPhotos.filter((photo) => photo._id !== _id)
         );
       } else {
-        console.error("Failed to delete the photo.", await response.text());
+        console.error("Failed to delete the photo.");
       }
     } catch (error) {
       console.error("Error deleting the photo:", error);
@@ -57,7 +54,7 @@ const Photo = () => {
                 />
               </View>
               <Text style={styles.photoDescription}>
-                description: {photo.description}
+                Description: {photo.description}
               </Text>
               <TouchableOpacity
                 style={styles.deleteButton}
@@ -75,4 +72,4 @@ const Photo = () => {
   );
 };
 
-export default Photo;
+export default Photos;

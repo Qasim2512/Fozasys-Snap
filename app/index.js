@@ -1,80 +1,125 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
-  StyleSheet,
   ScrollView,
+  StyleSheet,
+  Image,
+  TextInput,
+  Button,
 } from "react-native";
 import Home from "./Home/Home";
 import Photos from "./Photos/photos";
 import Video from "./Video/video";
 import Login from "./Auth/Login";
 import Register from "./Auth/register";
+import Profile from "./Auth/profile";
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState("Home");
   const [authPage, setAuthPage] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [userInfo, setUserInfo] = useState({
+    username: "",
+    email: "",
+    uploads: [],
+    profilePic: "",
+  });
+
+  useEffect(() => {
+    // You can check local storage or async storage here to check if user is already logged in
+    // Example: getUserDataFromStorage();
+  }, []);
 
   const showLoginPage = () => setAuthPage("Login");
   const showRegisterPage = () => setAuthPage("Register");
-  const logout = () => {
-    setIsLoggedIn(false);
-    setAuthPage("");
+
+  const handleLoginSuccess = async (token, user) => {
+    try {
+      // Corrected URL by wrapping the string in quotes
+      const res = await fetch(`http://localhost:3000/user/${user._id}`);
+      const userData = await res.json();
+      setUserInfo(userData); // updated with the correct userData from response
+      setIsLoggedIn(true);
+      setAuthPage(""); // close the auth page after successful login
+    } catch (err) {
+      console.error("Failed to fetch user profile:", err);
+    }
   };
 
-  const handleLoginSuccess = (token) => {
-    // Store the token (in state or AsyncStorage) for authenticated sessions
-    setIsLoggedIn(true);
-    setAuthPage("");
-    console.log("Login successful, token:", token);
+  const handleRegisterSuccess = (user) => {
+    setAuthPage("Login");
+    setUserInfo(user);
+  };
+
+  const logout = () => {
+    setIsLoggedIn(false);
+    setAuthPage("Login");
+    setUserInfo({
+      username: "",
+      email: "",
+      uploads: [],
+      profilePic: "",
+    });
+    setShowProfileMenu(false);
   };
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={{ flex: 1 }}>
-        <View style={styles.navbar}>
-          <TouchableOpacity onPress={() => setCurrentPage("Home")}>
-            <Text style={styles.navText}>Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setCurrentPage("Photos")}>
-            <Text style={styles.navText}>Photos</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setCurrentPage("Video")}>
-            <Text style={styles.navText}>Videos</Text>
-          </TouchableOpacity>
-        </View>
-
         {authPage === "Login" ? (
-          <Login onLoginSuccess={handleLoginSuccess} />
+          <Login onLoginSuccess={handleLoginSuccess} showRegisterPage={showRegisterPage} />
         ) : authPage === "Register" ? (
-          <Register onRegisterSuccess={handleLoginSuccess} />
+          <Register onRegisterSuccess={handleRegisterSuccess} />
         ) : (
           <View style={{ marginTop: 60 }}>
-            {currentPage === "Home" && <Home />}
-            {currentPage === "Photos" && <Photos />}
-            {currentPage === "Video" && <Video />}
-          </View>
-        )}
+            {isLoggedIn ? (
+              <>
+                <View style={styles.navbar}>
+                  <TouchableOpacity onPress={() => setCurrentPage("Home")}>
+                    <Text style={styles.navText}>Home</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => setCurrentPage("Photos")}>
+                    <Text style={styles.navText}>Photos</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => setCurrentPage("Video")}>
+                    <Text style={styles.navText}>Videos</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setShowProfileMenu(!showProfileMenu)}
+                  >
+                    <Text style={styles.navText}> 👤 Profile</Text>
+                  </TouchableOpacity>
+                </View>
 
-        {!isLoggedIn && !authPage && (
-          <View style={styles.authNav}>
-            <TouchableOpacity style={styles.button} onPress={showLoginPage}>
-              <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={showRegisterPage}>
-              <Text style={styles.buttonText}>Register</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+                {/* Profile dropdown */}
+                {showProfileMenu && (
+                  <View style={styles.dropdown}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setCurrentPage("Account");
+                        setShowProfileMenu(false);
+                      }}
+                    >
+                      <Text style={styles.dropdownItem}>Account Info</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={logout}>
+                      <Text style={styles.dropdownItem}>Logout</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
 
-        {isLoggedIn && (
-          <View style={styles.logoutContainer}>
-            <TouchableOpacity style={styles.button} onPress={logout}>
-              <Text style={styles.buttonText}>Logout</Text>
-            </TouchableOpacity>
+                {/* Render pages */}
+                {currentPage === "Home" && <Home />}
+                {currentPage === "Photos" && <Photos />}
+                {currentPage === "Video" && <Video />}
+                {currentPage === "Account" && <Profile userInfo={userInfo} />}
+              </>
+            ) : (
+              <Login onLoginSuccess={handleLoginSuccess} showRegisterPage={showRegisterPage} />
+            )}
           </View>
         )}
       </View>
@@ -93,31 +138,14 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
   },
-  button: {
-    backgroundColor: "#333",
+  dropdown: {
+    backgroundColor: "#444",
     padding: 10,
-    alignItems: "center",
-    borderRadius: 5,
-    marginTop: 10,
   },
-  buttonText: {
+  dropdownItem: {
     color: "white",
-    fontSize: 18,
-  },
-  authNav: {
-    position: "absolute",
-    bottom: 20,
-    left: "50%",
-    transform: [{ translateX: -80 }],
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: 180,
-  },
-  logoutContainer: {
-    position: "absolute",
-    bottom: 20,
-    left: "50%",
-    transform: [{ translateX: -60 }],
+    paddingVertical: 5,
+    fontSize: 16,
   },
 });
 
