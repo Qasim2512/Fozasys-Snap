@@ -238,7 +238,10 @@ const Home = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.captureButton}
+              style={[
+                styles.captureButton,
+                { backgroundColor: isRecording ? "red" : "#3498db" },
+              ]}
               onPress={isRecording ? stopRecording : startRecording}
             >
               <Text style={styles.buttonText}>

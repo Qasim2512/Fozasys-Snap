@@ -24,19 +24,21 @@ const styles = StyleSheet.create({
     borderColor: "#3498db",
   },
   captureButton: {
-    backgroundColor: "#3498db",
+    backgroundColor:"#3498db",
     borderRadius: 30,
     paddingVertical: 12,
     paddingHorizontal: 20,
     margin: 10,
     elevation: 5,
   },
+
   buttonText: {
     color: "#ffffff",
     fontWeight: "bold",
     fontSize: 16,
     textAlign: "center",
   },
+
   imageContainer: {
     alignItems: "center",
     marginVertical: 20,
@@ -58,7 +60,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   deleteButton: {
-    backgroundColor: "#e74c3c", // Rød farge for slett-knappen
+    backgroundColor: "#c0392b", // Rød farge for slett-knappen
     borderRadius: 30,
     paddingVertical: 12,
     paddingHorizontal: 20,
@@ -83,7 +85,7 @@ const styles = StyleSheet.create({
     width: "100%", // Setter til full bredde
     backgroundColor: "#f9f9f9",
     fontSize: 16,
-    textAlign:"center"
+    textAlign: "center",
   },
 });
 
