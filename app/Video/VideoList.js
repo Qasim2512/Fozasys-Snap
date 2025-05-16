@@ -111,7 +111,7 @@ const VideoList = () => {
                 )}
               </View>
               <Text style={styles.videoDescription}>
-                Description: {video.description}
+                beskrivelse: {video.description}
               </Text>
               <TouchableOpacity
                 style={styles.deleteButton}

@@ -99,7 +99,7 @@ const Photo = () => {
                 />
               </View>
               <Text style={styles.photoDescription}>
-                description: {photo.description}
+                beskrivelse: {photo.description}
               </Text>
               <TouchableOpacity
                 style={styles.deleteButton}

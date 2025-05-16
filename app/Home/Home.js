@@ -255,7 +255,7 @@ const Home = () => {
           <View style={styles.imageContainer}>
             <TextInput
               style={styles.input}
-              placeholder="name"
+              placeholder="navn"
               value={name}
               onChangeText={(text) => setName(text)}
             />
@@ -267,7 +267,7 @@ const Home = () => {
 
             <TextInput
               style={styles.input}
-              placeholder="description"
+              placeholder="beskrivelse"
               value={description}
               onChangeText={(text) => setDescription(text)}
             />

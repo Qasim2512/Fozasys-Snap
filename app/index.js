@@ -23,13 +23,13 @@ const Index = () => {
         }}
       >
         <TouchableOpacity onPress={() => setCurrentPage("Home")}>
-          <Text style={{ color: "white", fontSize: 18 }}>Home</Text>
+          <Text style={{ color: "white", fontSize: 18 }}>🏠 Home</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setCurrentPage("Photos")}>
-          <Text style={{ color: "white", fontSize: 18 }}>Photos</Text>
+          <Text style={{ color: "white", fontSize: 18 }}>📸 Photos</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setCurrentPage("Video")}>
-          <Text style={{ color: "white", fontSize: 18 }}>Videos</Text>
+          <Text style={{ color: "white", fontSize: 18 }}>🎥 Videos</Text>
         </TouchableOpacity>
       </View>
 
