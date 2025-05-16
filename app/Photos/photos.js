@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Platform
+  Platform,
 } from "react-native";
 import { Searchbar } from "react-native-paper";
 import filter from "lodash.filter";
@@ -25,8 +25,6 @@ const Photo = () => {
   }, []);
 
   const fetchData = async () => {
-    //  let response = await fetch("http://localhost:3000/photo"); WEB
-
     const baseUrl =
       Platform.OS === "web"
         ? `http://localhost:3000/photo`
