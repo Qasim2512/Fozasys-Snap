@@ -104,17 +104,25 @@ export default function NewFile() {
 
   return (
     <View style={styles.container}>
-      <CameraView ref={cameraRef} facing={facing} mode="video">
+      <CameraView
+        ref={cameraRef}
+        facing={facing}
+        mode="video"
+        style={styles.camera}
+      >
         <View>
-          <Button title={""} />
+          <Button
+            onPress={toggleCameraFacing}
+            style={styles.message}
+            title="Flip Camera"
+          />
         </View>
       </CameraView>
 
       <Button
         onPress={handleRecord}
-        title="Learn More"
+        title={isRecording ? "Stop video" : "Start Video"}
         color="#841584"
-        accessibilityLabel="Learn more about this purple button"
       />
 
       {videoUri && (
@@ -144,7 +152,13 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   camera: {
-    flex: 1,
+    width: "100%",
+    height: 300,
+    borderRadius: 15,
+    overflow: "hidden",
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: "#3498db",
   },
   buttonContainer: {
     flex: 1,
