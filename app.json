@@ -3,8 +3,18 @@
     "sdkVersion": "53.0.0",
     "scheme": "acme",
     "newArchEnabled": true,
-    "plugins": ["expo-router"],
     "name": "Fozasys-Snap",
-    "slug": "Fozasys-Snap"
+    "slug": "Fozasys-Snap",
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Fozasys-Snap to access your camera.",
+          "microphonePermission": "Allow Fozasys-Snap to access your microphone.",
+          "recordAudioAndroid": true
+        }
+      ]
+    ]
   }
 }
