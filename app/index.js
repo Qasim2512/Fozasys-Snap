@@ -18,7 +18,6 @@ import Video from "./Video/VideoList";
 import Login from "./Auth/Login";
 import Register from "./Auth/register";
 import Profile from "./Auth/profile";
-import NewFile from "./newFile";
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState("Home");
@@ -100,9 +99,7 @@ const Index = () => {
                   <TouchableOpacity onPress={() => setCurrentPage("Video")}>
                     <Text style={styles.navText}>Videos</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setCurrentPage("newFile")}>
-                    <Text style={styles.navText}>New File</Text>
-                  </TouchableOpacity>
+
                   <TouchableOpacity
                     onPress={() => setShowProfileMenu(!showProfileMenu)}
                   >
@@ -132,7 +129,6 @@ const Index = () => {
                 {currentPage === "Photos" && <Photos />}
                 {currentPage === "Video" && <Video />}
                 {currentPage === "Account" && <Profile userInfo={userInfo} />}
-                {currentPage === "newFile" && <NewFile />}
               </>
             ) : (
               <Login

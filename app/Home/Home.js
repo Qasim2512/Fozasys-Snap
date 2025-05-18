@@ -13,6 +13,8 @@ import {
 import { CameraView } from "expo-camera";
 import styles from "./Home.style";
 import axios from "axios";
+import NewFile from "../newFile"; //Importing the video component
+import { Video } from "expo-av"; //Importing the video component
 
 const Home = () => {
   const cameraRef = useRef(null);
@@ -28,6 +30,9 @@ const Home = () => {
 
   const [latestMedia, setLatestMedia] = useState(null); //Image: Show and send to backend. Video: Only show, videoForCloud sent to Cloud and then backend
   const [videoForCloud, setVideoForCloud] = useState(null); //For sending video taken to cloud and get secure_url
+
+  const [taBildet, setTaBildet] = useState(false);
+  const [taVideo, setTaVideo] = useState(false);
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -168,7 +173,6 @@ const Home = () => {
     );
     formData.append("name", name);
     formData.append("description", description);
-    
 
     axios
       .post(baseUrl, formData, {
@@ -204,22 +208,43 @@ const Home = () => {
           </>
         ) : (
           <>
-            <CameraView ref={cameraRef} style={styles.camera} />
             <TouchableOpacity
               style={styles.captureButton}
-              onPress={takePicture}
+              onPress={() => {
+                setTaBildet(true);
+                setTaVideo(false);
+              }}
             >
-              <Text style={styles.buttonText}>📸 Ta bilde</Text>
+              <Text style={styles.buttonText}>📸 Jeg ønsker å ta bilde</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.captureButton}
-              onPress={isRecording ? stopRecording : startRecording}
+              onPress={() => {
+                setTaBildet(false);
+                setTaVideo(true);
+              }}
             >
-              <Text style={styles.buttonText}>
-                {isRecording ? "⏹ Stopp opptak" : "🎥 Ta video"}
-              </Text>
+              <Text style={styles.buttonText}>Jeg ønsker å ta video</Text>
             </TouchableOpacity>
+
+            {taBildet && (
+              <>
+                <CameraView ref={cameraRef} style={styles.camera} />
+                <TouchableOpacity
+                  style={styles.captureButton}
+                  onPress={takePicture}
+                >
+                  <Text style={styles.buttonText}>📸 Ta bilde</Text>
+                </TouchableOpacity>
+              </>
+            )}
+
+            {taVideo && (
+              <View style={styles.container}>
+                <NewFile />
+              </View>
+            )}
           </>
           //  For å få den fiksa på appen må man skrive kode her inne bare å jobbe med det :)
         )}
