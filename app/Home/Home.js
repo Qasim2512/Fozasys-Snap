@@ -123,7 +123,6 @@ const Home = () => {
     }
   };
 
-  //Fungerer i web, vet ikke om det fungerer i appen
   const stopRecording = () => {
     if (Platform.OS === "web" && mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
@@ -134,7 +133,6 @@ const Home = () => {
     if (hasPermission === false) return <Text>Ingen tilgang til kamera</Text>;
   };
 
-  //Fungerer i web, vet ikke om det fungerer i appen
   const uploadVideoToCloudinary = async () => {
     const data = new FormData();
     data.append("file", videoForCloud);
@@ -152,9 +150,6 @@ const Home = () => {
       console.error(error);
     }
   };
-
-  //Oppdater url slik at den funker i appen
-  //   http://192.168.0.14:3000 //APP
 
   const Post = async () => {
     const cloudSecureUrl = await uploadVideoToCloudinary();

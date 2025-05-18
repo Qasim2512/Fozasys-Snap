@@ -9,6 +9,8 @@ import {
 import { Video, ResizeMode } from "expo-av"; // for preview
 import { useState, useRef } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import axios from "axios";
+import * as FileSystem from "expo-file-system";
 
 export default function NewFile() {
   const cameraRef = useRef(null);
@@ -16,6 +18,7 @@ export default function NewFile() {
   const [facing, setFacing] = useState("back");
   const [isRecording, setIsRecording] = useState(false);
   const [videoUri, setVideoUri] = useState(null);
+  const [videoForCloud, setVideoForCloud] = useState(null); //For sending video taken to cloud and get secure_url
 
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [micPermission, requestMicPermission] = useMicrophonePermissions();
@@ -68,6 +71,10 @@ export default function NewFile() {
         const video = await cameraRef.current.recordAsync();
         // recordAsync resolves when stopRecording() is called
         setVideoUri(video.uri);
+
+        console.log("Video URI:", video.uri);
+
+        convertVideoToBase64(video.uri);
       } catch (e) {
         console.error("Recording error:", e);
       } finally {
@@ -76,31 +83,44 @@ export default function NewFile() {
     }
   }
 
-  async function uploadToCloudinary() {
-    if (!videoUri) return;
-    const data = new FormData();
-    data.append("file", {
-      uri: videoUri,
-      type: "video/mp4",
-      name: "video.mp4",
-    });
-    data.append("upload_preset", "YOUR_UNSIGNED_UPLOAD_PRESET"); // create this in Cloudinary
+  const convertVideoToBase64 = async (videoUri) => {
     try {
-      const response = await fetch(
-        "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/video/upload",
-        {
-          method: "POST",
-          body: data,
-        }
-      );
-      const result = await response.json();
-      console.log("Cloudinary response:", result);
-      alert("Upload successful! Video URL: " + result.secure_url);
-    } catch (err) {
-      console.error("Upload failed:", err);
-      alert("Upload error: " + err.message);
+      // Remove 'file://' prefix if present
+      const path = videoUri.startsWith("file://")
+        ? videoUri.replace("file://", "")
+        : videoUri;
+
+      const base64String = await FileSystem.readAsStringAsync(path, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      console.log("Base64 String:", base64String);
+
+      const cloudinaryDataUrl = `data:video/webm;base64,${base64String}`;
+
+      setVideoForCloud(cloudinaryDataUrl);
+      return base64String;
+    } catch (error) {
+      console.error("Error converting video to base64:", error);
     }
-  }
+  };
+
+  const uploadVideoToCloudinary = async () => {
+    const data = new FormData();
+    data.append("file", videoForCloud);
+    data.append("upload_preset", "video_preset");
+
+    try {
+      let cloudName = "dand5cke0";
+      let resourceType = "video";
+      let api = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
+
+      const res = await axios.post(api, data);
+      const url = res.data.secure_url;
+      return url;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -135,7 +155,10 @@ export default function NewFile() {
             isLooping
             onError={(e) => console.error(e)}
           />
-          <Button title="Upload to Cloudinary" onPress={uploadToCloudinary} />
+          <Button
+            title="Upload to Cloudinary"
+            onPress={uploadVideoToCloudinary}
+          />
         </View>
       )}
     </View>
