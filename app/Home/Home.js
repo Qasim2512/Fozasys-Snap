@@ -153,7 +153,7 @@ const Home = () => {
 
   const Post = async () => {
     const cloudSecureUrl = await uploadVideoToCloudinary();
-    console.log(cloudSecureUrl);
+
     const endpoint = latestMedia.type === "image" ? "photo" : "video";
 
     const baseUrl =
@@ -168,6 +168,7 @@ const Home = () => {
     );
     formData.append("name", name);
     formData.append("description", description);
+    
 
     axios
       .post(baseUrl, formData, {
