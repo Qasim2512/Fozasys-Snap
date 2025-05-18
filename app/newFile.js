@@ -18,6 +18,7 @@ export default function NewFile() {
   const [facing, setFacing] = useState("back");
   const [isRecording, setIsRecording] = useState(false);
   const [videoUri, setVideoUri] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [videoForCloud, setVideoForCloud] = useState(null); //For sending video taken to cloud and get secure_url
 
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -105,6 +106,7 @@ export default function NewFile() {
   };
 
   const uploadVideoToCloudinary = async () => {
+    setLoading(true);
     const data = new FormData();
     data.append("file", videoForCloud);
     data.append("upload_preset", "video_preset");
@@ -116,6 +118,8 @@ export default function NewFile() {
 
       const res = await axios.post(api, data);
       const url = res.data.secure_url;
+      setVideoUri(null) // Reset videoUri after upload
+      setLoading(false);
       return url;
     } catch (error) {
       console.error(error);
@@ -144,6 +148,8 @@ export default function NewFile() {
         title={isRecording ? "Stop video" : "Start Video"}
         color="#841584"
       />
+
+      {loading && <Text style={styles.message}>Uploading...</Text>}
 
       {videoUri && (
         <View style={{ flex: 1 }}>
