@@ -227,7 +227,7 @@ const Home = () => {
                 setLatestMedia(null);
               }}
             >
-              <Text style={styles.buttonText}>Jeg ønsker å ta video</Text>
+              <Text style={styles.buttonText}>🎥 Jeg ønsker å ta video</Text>
             </TouchableOpacity>
 
             {taBildet && (
