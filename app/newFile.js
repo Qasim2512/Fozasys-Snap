@@ -6,7 +6,7 @@ import {
   useCameraPermissions,
   useMicrophonePermissions,
 } from "expo-camera";
-import { Video, ResizeMode } from "expo-av"; // for preview
+import { Video, ResizeMode } from "expo-av";
 import { useState, useRef } from "react";
 import {
   Button,
@@ -15,6 +15,8 @@ import {
   TouchableOpacity,
   View,
   Platform,
+  TextInput,
+  ScrollView,
 } from "react-native";
 import axios from "axios";
 import * as FileSystem from "expo-file-system";
@@ -26,20 +28,20 @@ export default function NewFile() {
   const [isRecording, setIsRecording] = useState(false);
   const [videoUri, setVideoUri] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [videoForCloud, setVideoForCloud] = useState(null); //For sending video taken to cloud and get secure_url
+  const [videoForCloud, setVideoForCloud] = useState(null);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [micPermission, requestMicPermission] = useMicrophonePermissions();
 
-  // Wait for permissions to load
   if (!cameraPermission || !micPermission) {
-    // Permissions are still loading or undefined
     return <View />;
   }
-  // If camera permission not granted, prompt the user
+
   if (!cameraPermission.granted) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View>
         <Text>We need your permission to use the camera</Text>
         <Button
           title="Grant Camera Permission"
@@ -48,10 +50,10 @@ export default function NewFile() {
       </View>
     );
   }
-  // If microphone permission not granted, prompt the user
+
   if (!micPermission.granted) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View>
         <Text>
           We need your permission to use the microphone for video recording
         </Text>
@@ -69,17 +71,13 @@ export default function NewFile() {
 
   async function handleRecord() {
     if (isRecording) {
-      // Stop the video recording
       cameraRef.current.stopRecording();
-      // The promise from recordAsync will resolve after this
     } else {
-      // Start video recording
       setIsRecording(true);
       try {
         const video = await cameraRef.current.recordAsync();
-        // recordAsync resolves when stopRecording() is called
+        console.log("Video URI:", video.uri);
         setVideoUri(video.uri);
-
         convertVideoToBase64(video.uri);
       } catch (e) {
         console.error("Recording error:", e);
@@ -91,17 +89,11 @@ export default function NewFile() {
 
   const convertVideoToBase64 = async (videoUri) => {
     try {
-      // Remove 'file://' prefix if present
-      const path = videoUri.startsWith("file://")
-        ? videoUri.replace("file://", "")
-        : videoUri;
-
+      const path = videoUri.replace("file://", "");
       const base64String = await FileSystem.readAsStringAsync(path, {
         encoding: FileSystem.EncodingType.Base64,
       });
-
       const cloudinaryDataUrl = `data:video/webm;base64,${base64String}`;
-
       setVideoForCloud(cloudinaryDataUrl);
       return base64String;
     } catch (error) {
@@ -118,12 +110,10 @@ export default function NewFile() {
       let cloudName = "dand5cke0";
       let resourceType = "video";
       let api = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
-
       const res = await axios.post(api, data);
-      const url = res.data.secure_url;
-      return url;
+      return res.data.secure_url;
     } catch (error) {
-      console.error(error);
+      console.error("Cloudinary upload error:", error);
     }
   };
 
@@ -139,81 +129,102 @@ export default function NewFile() {
 
     const formData = new FormData();
     formData.append("file", cloudSecureUrl);
+    formData.append("name", name);
+    formData.append("description", description);
 
-    formData.append("name", "video");
-    formData.append("description", "description");
-
-    axios
-      .post(baseUrl, formData, {
+    try {
+      const response = await axios.post(baseUrl, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      })
-      .then((response) => {
-        console.log("Video uploaded successfully:", response.data);
-        setVideoUri(null);
-      })
-      .catch((error) => {
-        console.log("Error uploading video:", error);
-        console.error(error);
       });
+      console.log("Video uploaded successfully:", response.data);
+      setVideoUri(null);
+    } catch (error) {
+      console.error("Error uploading video:", error);
+    }
 
     setLoading(false);
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <CameraView
         ref={cameraRef}
         facing={facing}
         mode="video"
         style={styles.camera}
       >
-        <View>
-          <Button
-            onPress={toggleCameraFacing}
-            style={styles.message}
-            title="Flip Camera"
-          />
-        </View>
+        <TouchableOpacity
+          style={styles.captureButton}
+          onPress={toggleCameraFacing}
+        >
+          <Text style={styles.buttonText}>🔁 Flip</Text>
+        </TouchableOpacity>
       </CameraView>
 
-      <Button
+      <TouchableOpacity
+        style={[styles.captureButton, { backgroundColor: "#841584" }]}
         onPress={handleRecord}
-        title={isRecording ? "Stop video" : "Start Video"}
-        color="#841584"
-      />
+      >
+        <Text style={styles.buttonText}>
+          {isRecording ? "⏹ Stop Video" : "🎥 Start Video"}
+        </Text>
+      </TouchableOpacity>
 
-      {loading && <Text style={styles.message}>Uploading...</Text>}
+      {loading && <Text style={styles.message}>⏳ Uploading...</Text>}
 
       {videoUri && (
-        <View style={{ flex: 1 }}>
+        <View style={styles.videoContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Navn"
+            value={name}
+            onChangeText={(text) => setName(text)}
+          />
+
           <Video
             source={{ uri: videoUri }}
-            style={{ width: "100%", height: 300 }}
+            style={styles.preview}
             useNativeControls
             resizeMode={ResizeMode.CONTAIN}
             isLooping
-            onError={(e) => console.error(e)}
+            shouldPlay={false}
+            onError={(e) => console.error("Video preview error:", e)}
           />
-          <Button title="Upload to Cloudinary" onPress={Post} />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Beskrivelse"
+            value={description}
+            onChangeText={(text) => setDescription(text)}
+          />
+
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => setVideoUri(null)}
+          >
+            <Text style={styles.buttonText}>❌ Slett</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.postButton} onPress={Post}>
+            <Text style={styles.buttonText}>📤 Post</Text>
+          </TouchableOpacity>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  message: {
-    textAlign: "center",
-    paddingBottom: 10,
+    flexGrow: 1,
+    padding: 15,
+    backgroundColor: "#ecf0f1",
+    alignItems: "center",
   },
   camera: {
-    width: "100%",
+    width: 300,
     height: 300,
     borderRadius: 15,
     overflow: "hidden",
@@ -221,20 +232,72 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#3498db",
   },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: "transparent",
-    margin: 64,
+  captureButton: {
+    backgroundColor: "#3498db",
+    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    marginVertical: 10,
+    elevation: 5,
+    alignSelf: "center",
   },
-  button: {
-    flex: 1,
-    alignSelf: "flex-end",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 24,
+  buttonText: {
+    color: "#ffffff",
     fontWeight: "bold",
-    color: "white",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  message: {
+    fontSize: 16,
+    color: "#2c3e50",
+    marginVertical: 10,
+  },
+  videoContainer: {
+    alignItems: "center",
+    marginVertical: 20,
+    backgroundColor: "#ffffff",
+    borderRadius: 15,
+    padding: 20,
+    width: "100%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  preview: {
+    width: "100%",
+    height: 300,
+    borderRadius: 10,
+    backgroundColor: "#000",
+    marginVertical: 10,
+  },
+  input: {
+    height: 50,
+    borderColor: "#3498db",
+    borderWidth: 2,
+    borderRadius: 5,
+    marginVertical: 10,
+    paddingHorizontal: 10,
+    width: "100%",
+    backgroundColor: "#f9f9f9",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  deleteButton: {
+    backgroundColor: "#c0392b",
+    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    marginVertical: 10,
+    elevation: 5,
+  },
+  postButton: {
+    backgroundColor: "#2ecc71",
+    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    marginVertical: 10,
+    elevation: 5,
   },
 });

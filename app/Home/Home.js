@@ -213,6 +213,7 @@ const Home = () => {
               onPress={() => {
                 setTaBildet(true);
                 setTaVideo(false);
+                setLatestMedia(null);
               }}
             >
               <Text style={styles.buttonText}>📸 Jeg ønsker å ta bilde</Text>
@@ -223,6 +224,7 @@ const Home = () => {
               onPress={() => {
                 setTaBildet(false);
                 setTaVideo(true);
+                setLatestMedia(null);
               }}
             >
               <Text style={styles.buttonText}>Jeg ønsker å ta video</Text>
@@ -246,7 +248,6 @@ const Home = () => {
               </View>
             )}
           </>
-          //  For å få den fiksa på appen må man skrive kode her inne bare å jobbe med det :)
         )}
 
         {cameraStarted && !latestMedia && (

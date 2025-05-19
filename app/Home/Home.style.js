@@ -6,7 +6,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ecf0f1", // Lys bakgrunnsfarge
+    backgroundColor: "#ecf0f1", 
     padding: 15,
     alignItems: "center",
   },
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 15,
     padding: 20,
-    width: "50%", // Gjør containeren så bred som mulig
+    width: "50%", 
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -53,14 +53,14 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   preview: {
-    width: "100%", // Sett bredden til å være 100%
-    height: 300, // Sett til en maksimal høyde der hele bildet kan vises
+    width: "100%", 
+    height: 300, 
     borderRadius: 10,
-    resizeMode: "contain", // Sørg for at hele bildet vises uten kutting
+    resizeMode: "contain", 
     marginBottom: 10,
   },
   deleteButton: {
-    backgroundColor: "#c0392b", // Rød farge for slett-knappen
+    backgroundColor: "#c0392b", 
     borderRadius: 30,
     paddingVertical: 12,
     paddingHorizontal: 20,
