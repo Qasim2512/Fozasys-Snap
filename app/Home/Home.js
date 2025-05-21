@@ -13,7 +13,7 @@ import {
 import { CameraView } from "expo-camera";
 import styles from "./Home.style";
 import axios from "axios";
-import NewFile from "../newFile"; //Importing the video component
+import VideoApp from "../videoApp"; //Importing the video component
 import { Video } from "expo-av"; //Importing the video component
 
 const Home = () => {
@@ -33,6 +33,7 @@ const Home = () => {
 
   const [taBildet, setTaBildet] = useState(false);
   const [taVideo, setTaVideo] = useState(false);
+  const [facing, setFacing] = useState("back");
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -188,6 +189,10 @@ const Home = () => {
       });
   };
 
+  function toggleCameraFacing() {
+    setFacing((current) => (current === "back" ? "front" : "back"));
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -232,7 +237,17 @@ const Home = () => {
 
             {taBildet && (
               <>
-                <CameraView ref={cameraRef} style={styles.camera} />
+                <CameraView
+                  ref={cameraRef}
+                  style={styles.camera}
+                  facing={facing}
+                />
+                <TouchableOpacity
+                  style={styles.captureButton}
+                  onPress={toggleCameraFacing}
+                >
+                  <Text style={styles.buttonText}>🔁 Flip</Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.captureButton}
                   onPress={takePicture}
@@ -244,7 +259,7 @@ const Home = () => {
 
             {taVideo && (
               <View style={styles.container}>
-                <NewFile />
+                <VideoApp />
               </View>
             )}
           </>

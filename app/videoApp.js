@@ -21,7 +21,7 @@ import {
 import axios from "axios";
 import * as FileSystem from "expo-file-system";
 
-export default function NewFile() {
+export default function videoApp() {
   const cameraRef = useRef(null);
 
   const [facing, setFacing] = useState("back");
