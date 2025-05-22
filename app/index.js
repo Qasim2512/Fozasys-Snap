@@ -107,7 +107,7 @@ const Index = () => {
                   </TouchableOpacity>
                 </View>
 
-                {/* Profile dropdown */}
+                {/* Profile Menu */}
                 {showProfileMenu && (
                   <View style={styles.dropdown}>
                     <TouchableOpacity

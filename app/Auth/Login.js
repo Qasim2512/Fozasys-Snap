@@ -100,18 +100,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#F5F5F5", // Soft background
+    backgroundColor: "#F5F5F5", 
   },
   welcomeText: {
     fontSize: 36,
     fontWeight: "700",
-    color: "#000", // Black text
+    color: "#000", 
     marginBottom: 10,
     textAlign: "center",
   },
   subHeading: {
     fontSize: 18,
-    color: "#000", // Black text
+    color: "#000", 
     marginBottom: 30,
     textAlign: "center",
   },
@@ -119,12 +119,12 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 12,
     marginBottom: 15,
-    borderColor: "#000", // Black border
+    borderColor: "#000", 
     borderWidth: 2,
     borderRadius: 10,
     backgroundColor: "#fff",
     fontSize: 16,
-    color: "#000", // Black text
+    color: "#000", 
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   button: {
-    backgroundColor: "#000", // Black button background
+    backgroundColor: "#000", 
     padding: 12,
     width: "100%",
     alignItems: "center",
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
-    color: "#fff", // White text on black button
+    color: "#fff", 
     fontSize: 18,
     fontWeight: "600",
   },
@@ -162,11 +162,11 @@ const styles = StyleSheet.create({
   },
   registerText: {
     fontSize: 16,
-    color: "#000", // Black text
+    color: "#000", 
   },
   registerLink: {
     fontSize: 16,
-    color: "#4CAF50", // Green text
+    color: "#4CAF50",
     textDecorationLine: "underline",
   },
 });

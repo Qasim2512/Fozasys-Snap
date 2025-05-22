@@ -53,7 +53,7 @@ const Register = ({ onRegisterSuccess, onGoToLogin }) => {
 
       if (response.ok) {
         console.log("User registered successfully.");
-        onRegisterSuccess(); // ⬅ Redirect to login
+        onRegisterSuccess(); 
       } else {
         const errorText = await response.text();
         setError(`Failed to register user: ${errorText}`);
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#fff", // White background for contrast
+    backgroundColor: "#fff", 
   },
   logo: {
     width: 100,
@@ -142,13 +142,13 @@ const styles = StyleSheet.create({
   headingText: {
     fontSize: 32,
     fontWeight: "700",
-    color: "#000", // Black text
+    color: "#000", 
     marginBottom: 20,
     textAlign: "center",
   },
   subheadingText: {
     fontSize: 16,
-    color: "#333", // Dark gray for the subheading
+    color: "#333", 
     marginBottom: 30,
     textAlign: "center",
     fontStyle: "italic",
@@ -157,28 +157,28 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 12,
     marginBottom: 20,
-    borderColor: "#000", // Black border
+    borderColor: "#000", 
     borderWidth: 2,
     borderRadius: 8,
-    backgroundColor: "#fff", // White background for inputs
+    backgroundColor: "#fff", 
     fontSize: 16,
-    color: "#000", // Black text in inputs
+    color: "#000", 
   },
   button: {
-    backgroundColor: "#000", // Black button
+    backgroundColor: "#000", 
     padding: 14,
     width: "100%",
     alignItems: "center",
     borderRadius: 8,
     marginVertical: 15,
-    shadowColor: "#000", // Shadow for the button
+    shadowColor: "#000", 
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 5,
   },
   buttonText: {
-    color: "#fff", // White text on black button
+    color: "#fff", 
     fontSize: 18,
     fontWeight: "600",
   },
@@ -194,11 +194,11 @@ const styles = StyleSheet.create({
   },
   loginText: {
     fontSize: 16,
-    color: "#000", // Black text for "Already have an account?"
+    color: "#000", 
   },
   loginLink: {
     fontSize: 16,
-    color: "#000", // Black color for the login link
+    color: "#000", 
     textDecorationLine: "underline",
   },
 });

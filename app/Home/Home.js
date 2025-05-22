@@ -28,8 +28,8 @@ const Home = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
-  const [latestMedia, setLatestMedia] = useState(null); //Image: Show and send to backend. Video: Only show, videoForCloud sent to Cloud and then backend
-  const [videoForCloud, setVideoForCloud] = useState(null); //For sending video taken to cloud and get secure_url
+  const [latestMedia, setLatestMedia] = useState(null); 
+  const [videoForCloud, setVideoForCloud] = useState(null); 
 
   const [taBildet, setTaBildet] = useState(false);
   const [taVideo, setTaVideo] = useState(false);
